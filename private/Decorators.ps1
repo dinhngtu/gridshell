@@ -34,6 +34,7 @@ function ConvertTo-OarJobObject {
             StartedAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.started_at).DateTime.ToLocalTime();
             StoppedAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.stopped_at).DateTime.ToLocalTime();
             Duration = [timespan]::FromSeconds($_.walltime);
+            Site = $_.links | Where-Object rel -eq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf
         }
     }
 }

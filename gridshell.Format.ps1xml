@@ -74,6 +74,9 @@
                     <TableRowEntry>
                         <TableColumnItems>
                             <TableColumnItem>
+                                <PropertyName>Site</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
                                 <PropertyName>JobId</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
