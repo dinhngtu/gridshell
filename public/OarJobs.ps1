@@ -1,18 +1,20 @@
 function Get-OarJob {
     [CmdletBinding(DefaultParameterSetName = "Query")]
     param(
-        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id")][int]$JobId,
+        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int]$JobId,
         [Parameter()][ValidatePattern("\w*")][string]$Site,
         [Parameter(ParameterSetName = "Query")][ValidateRange(0, 10000)][int]$Offset = 0,
         [Parameter(ParameterSetName = "Query")][ValidateRange(1, 500)][int]$Limit = 50,
         [Parameter(ParameterSetName = "Query")][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated")][string[]]$State = @("waiting", "launching", "running", "hold"),
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$Project,
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$User = $(Get-G5KCurrentUser),
-        [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$Queue = "default",
+        [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin")][string]$Queue = "default",
         [Parameter(ParameterSetName = "Query")][switch]$Resources,
         [Parameter()][pscredential]$Credential
     )
-    $Site = $Site ? $Site : (Get-G5KCurrentSite)
+    if (!$Site) {
+        $Site = Get-G5KCurrentSite
+    }
     if ($PSCmdlet.ParameterSetName -eq "Query") {
         if ($User -eq "*") {
             $User = ''
@@ -20,7 +22,7 @@ function Get-OarJob {
         $params = Remove-EmptyValues @{
             offset  = $Offset;
             limit   = $Limit;
-            state   = [string]::Join(",", $State);
+            state   = $State -join ",";
             project = $Project;
             user    = $User;
             queue   = $Queue;
@@ -36,21 +38,24 @@ Export-ModuleMember -Function Get-OarJob
 function New-OarJob {
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(Mandatory, Position = 0)][ValidateNotNullOrEmpty][string]$Command,
+        [Parameter(Mandatory, Position = 0)][ValidateNotNullOrEmpty()][string]$Command,
+        [Parameter()][ValidatePattern("\w*")][string]$Site,
         [Parameter()][string]$Resources,
         [Parameter()][string]$Directory = $(Get-Location),
         [Parameter()][string]$Output,
         [Parameter()][string]$ErrorOutput,
         [Parameter()][string]$Properties,
         [Parameter()][System.Nullable[datetime]]$Reservation,
-        [Parameter()][string[]]$Type,
+        [Parameter()][ValidateSet("day", "night", "besteffort", "cosystem", "container", "inner", "noop", "allow_classic_ssh", "deploy")][string[]]$Type = @(),
         [Parameter()][string]$Project,
         [Parameter()][string]$Name,
-        [Parameter()][string]$Queue,
+        [Parameter()][ValidateSet("default", "production", "admin")][string]$Queue = "default",
         [Parameter()][pscredential]$Credential
     )
-
-    if ($PSCmdlet.ShouldProcess(("command '{0}', type '{1}'" -f $Command, [string]::Join(",", $Type)), "New-OarJob")) {
+    if (!$Site) {
+        $Site = Get-G5KCurrentSite
+    }
+    if ($PSCmdlet.ShouldProcess(("command '{0}', type '{1}'" -f $Command, $Type -join ","), "New-OarJob")) {
         $params = Remove-EmptyValues @{
             command     = $Command;
             resources   = $Resources;
@@ -72,9 +77,8 @@ Export-ModuleMember -Function New-OarJob
 function Remove-OarJob {
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id")][int]$JobId,
-        [Parameter(ParameterSetName = "Id")][ValidatePattern("\w*")][string]$Site,
-        [Parameter(Mandatory, ValueFromPipeline, Position = 0, ParameterSetName = "InputObject")][System.Collections.IDictionary]$InputObject,
+        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int]$JobId,
+        [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string]$Site,
         [Parameter()][pscredential]$Credential,
         [Parameter()][switch]$AsJob
     )
@@ -84,7 +88,9 @@ function Remove-OarJob {
         $Site = $InputObject.links | Where-Object rel -eq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf
     }
     elseif ($PSCmdlet.ParameterSetName -eq "Id") {
-        $Site = $Site ? $Site : (Get-G5KCurrentSite)
+        if (!$Site) {
+            $Site = Get-G5KCurrentSite
+        }
     }
     if ($PSCmdlet.ShouldProcess("job '{0}', site '{1}'" -f @($Id, $Site), "Remove-OarJob")) {
         $resp = Invoke-RestMethod -Method Delete -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $Site, $Id) -Credential $Credential
