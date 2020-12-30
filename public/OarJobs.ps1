@@ -105,3 +105,5 @@ function Remove-OarJob {
     end {}
 }
 Export-ModuleMember -Function Remove-OarJob
+New-Alias -Name Stop-OarJob -Value Remove-OarJob
+Export-ModuleMember -Alias Stop-OarJob
