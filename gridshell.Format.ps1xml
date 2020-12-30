@@ -36,6 +36,9 @@
                             <TableColumnItem>
                                 <PropertyName>queues</PropertyName>
                             </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>model</PropertyName>
+                            </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
                 </TableRowEntries>
@@ -58,6 +61,12 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Cluster</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>architecture</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>network_adapters</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
