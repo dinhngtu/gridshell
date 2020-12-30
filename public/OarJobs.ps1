@@ -8,7 +8,7 @@ function Get-OarJob {
         [Parameter(ParameterSetName = "Query")][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated")][string[]]$State = @("waiting", "launching", "running", "hold"),
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$Project,
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$User = $(Get-G5KCurrentUser),
-        [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin")][string]$Queue = "default",
+        [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin")][string]$Queue,
         [Parameter(ParameterSetName = "Query")][switch]$Resources,
         [Parameter()][pscredential]$Credential
     )
@@ -82,29 +82,26 @@ function Remove-OarJob {
         [Parameter()][pscredential]$Credential,
         [Parameter()][switch]$AsJob
     )
-
-    if ($PSCmdlet.ParameterSetName -eq "InputObject") {
-        $Id = $InputObject.uid
-        $Site = $InputObject.links | Where-Object rel -eq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf
-    }
-    elseif ($PSCmdlet.ParameterSetName -eq "Id") {
+    begin {}
+    process {
         if (!$Site) {
             $Site = Get-G5KCurrentSite
         }
-    }
-    if ($PSCmdlet.ShouldProcess("job '{0}', site '{1}'" -f @($Id, $Site), "Remove-OarJob")) {
-        $resp = Invoke-RestMethod -Method Delete -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $Site, $Id) -Credential $Credential
-        if ($AsJob) {
-            return Start-Job -ArgumentList @($Site, $Id) -ScriptBlock {
-                param($Site, $Id)
-                do {
-                    $pollResp = Get-OarJob -Site $Site -Id $Id
-                } until ($pollResp.state -eq "error" -or $pollResp.state -eq "terminated")
+        if ($PSCmdlet.ShouldProcess("job '{0}', site '{1}'" -f @($JobId, $Site), "Remove-OarJob")) {
+            $resp = Invoke-RestMethod -Method Delete -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $Site, $JobId) -Credential $Credential
+            if ($AsJob) {
+                return Start-Job -ArgumentList @($Site, $JobId) -ScriptBlock {
+                    param($Site, $JobId)
+                    do {
+                        $pollResp = Get-OarJob -Site $Site -JobId $JobId
+                    } until ($pollResp.state -eq "error" -or $pollResp.state -eq "terminated")
+                }
+            }
+            else {
+                return $resp
             }
         }
-        else {
-            return $resp
-        }
     }
+    end {}
 }
 Export-ModuleMember -Function Remove-OarJob

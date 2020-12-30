@@ -10,7 +10,8 @@ function Get-OarSite {
         $currentSite = Get-G5KCurrentSite
         if ($currentSite) {
             return (Get-OarSite $currentSite)
-        } else {
+        }
+        else {
             return $null
         }
     }
@@ -32,10 +33,13 @@ function Get-OarCluster {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][ValidatePattern("\w*")]$Cluster,
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         [Parameter()][pscredential]$Credential
     )
+    if (!$Site) {
+        $Site = Get-G5KCurrentSite
+    }
     $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}" -f $g5kApiRoot, $Site, $Cluster) -Credential $Credential -Body @{
         branch = $Branch
     }
