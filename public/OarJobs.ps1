@@ -73,6 +73,8 @@ function New-OarJob {
     }
 }
 Export-ModuleMember -Function New-OarJob
+New-Alias -Name Start-OarJob -Value New-OarJob
+Export-ModuleMember -Alias Start-OarJob
 
 function Remove-OarJob {
     [CmdletBinding(SupportsShouldProcess)]
