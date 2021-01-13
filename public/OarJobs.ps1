@@ -96,6 +96,7 @@ function Remove-OarJob {
                     param($Site, $JobId)
                     do {
                         $pollResp = Get-OarJob -Site $Site -JobId $JobId
+                        Start-Sleep -Seconds 5
                     } until ($pollResp.state -eq "error" -or $pollResp.state -eq "terminated")
                 }
             }
