@@ -26,6 +26,14 @@ function Get-OarJob {
             if ("*" -in $State) {
                 $State = @()
             }
+            $params = Remove-EmptyValues @{
+                offset  = $Offset;
+                limit   = $Limit;
+                state   = $State -join ",";
+                project = $Project;
+                user    = $User;
+                queue   = $Queue;
+            }
         }
         elseif ($PSCmdlet.ParameterSetName -eq "Id") {
             if ($PSBoundParameters.Site -and $Site.Count -ne $JobId.Count -and $Site.Count -ne 1) {
@@ -35,14 +43,6 @@ function Get-OarJob {
     }
     process {
         if ($PSCmdlet.ParameterSetName -eq "Query") {
-            $params = Remove-EmptyValues @{
-                offset  = $Offset;
-                limit   = $Limit;
-                state   = $State -join ",";
-                project = $Project;
-                user    = $User;
-                queue   = $Queue;
-            }
             return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs" -f $g5kApiRoot, $Site[0]) -Credential $Credential -Body $params).items | ConvertTo-OarJobObject
         }
         else {
@@ -103,13 +103,56 @@ Export-ModuleMember -Function New-OarJob
 New-Alias -Name Start-OarJob -Value New-OarJob
 Export-ModuleMember -Alias Start-OarJob
 
+function Wait-OarJob {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][int[]]$JobId,
+        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        [Parameter()][int]$PollInterval = 60,
+        [Parameter()][string[]]$UntilState = @("error", "terminated")
+    )
+    if ($PSBoundParameters.Site -and ($Site.Count -ne $JobId.Count -and $Site.Count -ne 1)) {
+        throw [System.ArgumentException]::new("You can only specify one site per job ID")
+    }
+    elseif (!$Site.Count) {
+        $Site = @(Get-G5KCurrentSite)
+    }
+    if ($JobId.Count -gt 10) {
+        Write-Warning "Too many jobs, be careful of overusing the Grid'5000 API!"
+        if (!$PSBoundParameters.PollInterval) {
+            Write-Warning "Increasing poll interval to 300 seconds"
+            $PollInterval = 300
+        }
+    }
+    $towait = 0..($JobId.Count - 1) | ForEach-Object {
+        if ($Site.Count -eq 1) {
+            $currentSite = $Site[0]
+        }
+        else {
+            $currentSite = $Site[$_]
+        }
+        [pscustomobject]@{
+            JobId = $JobId[$_];
+            Site  = $currentSite;
+        }
+    }
+    while ($towait.Count) {
+        $pct = 100.0 * $towait.Count / $JobId.Count
+        Write-Progress -Activity "Waiting for $($towait.Count) remaining jobs..." -PercentComplete $pct
+        $towait = $towait | Get-OarJob | Where-Object state -NotIn $UntilState
+        Start-Sleep -Seconds $PollInterval
+    }
+}
+Export-ModuleMember -Function Wait-OarJob
+
 function Remove-OarJob {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
         [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter()][pscredential]$Credential,
-        [Parameter()][switch]$AsJob
+        [Parameter()][switch]$AsJob,
+        [Parameter()][switch]$PassThru
     )
     begin {
         if ($PSBoundParameters.Site -and ($Site.Count -ne $JobId.Count -and $Site.Count -ne 1)) {
@@ -134,11 +177,11 @@ function Remove-OarJob {
                     Start-Job -ArgumentList @($currentSite, $currentJobId) -ScriptBlock {
                         param($currentSite, $currentJobId)
                         Import-Module gridshell | Write-Verbose
-                        do {
-                            $pollResp = Get-OarJob -Site $currentSite -JobId $currentJobId
-                            Start-Sleep -Seconds 5 | Write-Verbose
-                        } until ($pollResp.state -eq "error" -or $pollResp.state -eq "terminated")
+                        Wait-OarJob -JobId $currentJobId -Site $currentSite
                     }
+                }
+                elseif ($PassThru) {
+                    Get-OarJob -JobId $currentJobId -Site $currentSite
                 }
                 else {
                     $resp
