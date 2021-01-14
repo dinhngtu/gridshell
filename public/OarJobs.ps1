@@ -73,7 +73,7 @@ function New-OarJob {
         [Parameter()][string]$ErrorOutput,
         [Parameter()][string]$Properties,
         [Parameter()][System.Nullable[datetime]]$Reservation,
-        [Parameter()][ValidateSet("day", "night", "weekend", "besteffort", "cosystem", "container", "inner", "noop", "allow_classic_ssh", "deploy")][string[]]$Type = @(),
+        [Parameter()][ValidateSet("day", "night", "besteffort", "cosystem", "container", "inner", "noop", "allow_classic_ssh", "deploy")][string[]]$Type = @(),
         [Parameter()][string]$Project,
         [Parameter()][string]$Name,
         [Parameter()][ValidateSet("default", "production", "admin", "besteffort")][string]$Queue = "default",
