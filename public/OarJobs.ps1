@@ -1,8 +1,8 @@
 function Get-OarJob {
     [CmdletBinding(DefaultParameterSetName = "Query")]
     param(
-        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int]$JobId,
-        [Parameter()][ValidatePattern("\w*")][string]$Site,
+        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
+        [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter(ParameterSetName = "Query")][ValidateRange(0, 10000)][int]$Offset = 0,
         [Parameter(ParameterSetName = "Query")][ValidateRange(1, 500)][int]$Limit = 50,
         [Parameter(ParameterSetName = "Query")][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated")][string[]]$State = @("waiting", "launching", "running", "hold"),
@@ -12,26 +12,43 @@ function Get-OarJob {
         [Parameter(ParameterSetName = "Query")][switch]$Resources,
         [Parameter()][pscredential]$Credential
     )
-    if (!$Site) {
-        $Site = Get-G5KCurrentSite
-    }
-    if ($PSCmdlet.ParameterSetName -eq "Query") {
-        if ($User -eq "*") {
-            $User = ''
+    begin {
+        if ($PSBoundParameters.Site -and ($Site.Count -ne $JobId.Count -and $Site.Count -ne 1)) {
+            throw [System.ArgumentException]::new("You can only specify one site per job ID")
         }
-        $params = Remove-EmptyValues @{
-            offset  = $Offset;
-            limit   = $Limit;
-            state   = $State -join ",";
-            project = $Project;
-            user    = $User;
-            queue   = $Queue;
+        elseif (!$Site.Count) {
+            $Site = @(Get-G5KCurrentSite)
         }
-        return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs" -f $g5kApiRoot, $Site) -Credential $Credential -Body $params).items | ConvertTo-OarJobObject
     }
-    else {
-        return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $Site, $JobId) -Credential $Credential | ConvertTo-OarJobObject
+    process {
+        if ($PSCmdlet.ParameterSetName -eq "Query") {
+            if ($User -eq "*") {
+                $User = ''
+            }
+            $params = Remove-EmptyValues @{
+                offset  = $Offset;
+                limit   = $Limit;
+                state   = $State -join ",";
+                project = $Project;
+                user    = $User;
+                queue   = $Queue;
+            }
+            return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs" -f $g5kApiRoot, $Site) -Credential $Credential -Body $params).items | ConvertTo-OarJobObject
+        }
+        else {
+            for ($i = 0; $i -lt $JobId.Count; $i++) {
+                $currentJobId = $JobId[$i]
+                if ($Site.Count -eq 1) {
+                    $currentSite = $Site[0]
+                }
+                else {
+                    $currentSite = $Site[$i]
+                }
+                Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential | ConvertTo-OarJobObject
+            }
+        }
     }
+    end {}
 }
 Export-ModuleMember -Function Get-OarJob
 
@@ -79,30 +96,43 @@ Export-ModuleMember -Alias Start-OarJob
 function Remove-OarJob {
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int]$JobId,
-        [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string]$Site,
+        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
+        [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter()][pscredential]$Credential,
         [Parameter()][switch]$AsJob
     )
-    begin {}
-    process {
-        if (!$Site) {
-            $Site = Get-G5KCurrentSite
+    begin {
+        if ($PSBoundParameters.Site -and ($Site.Count -ne $JobId.Count -and $Site.Count -ne 1)) {
+            throw [System.ArgumentException]::new("You can only specify one site per job ID")
         }
-        if ($PSCmdlet.ShouldProcess("job '{0}', site '{1}'" -f @($JobId, $Site), "Remove-OarJob")) {
-            $resp = Invoke-RestMethod -Method Delete -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $Site, $JobId) -Credential $Credential
-            if ($AsJob) {
-                return Start-Job -ArgumentList @($Site, $JobId) -ScriptBlock {
-                    param($Site, $JobId)
-                    Import-Module gridshell
-                    do {
-                        $pollResp = Get-OarJob -Site $Site -JobId $JobId
-                        Start-Sleep -Seconds 5
-                    } until ($pollResp.state -eq "error" -or $pollResp.state -eq "terminated")
-                }
+        elseif (!$Site.Count) {
+            $Site = @(Get-G5KCurrentSite)
+        }
+    }
+    process {
+        for ($i = 0; $i -lt $JobId.Count; $i++) {
+            $currentJobId = $JobId[$i]
+            if ($Site.Count -eq 1) {
+                $currentSite = $Site[0]
             }
             else {
-                return $resp
+                $currentSite = $Site[$i]
+            }
+            if ($PSCmdlet.ShouldProcess("job '{0}', site '{1}'" -f @($currentJobId, $currentSite), "Remove-OarJob")) {
+                $resp = Invoke-RestMethod -Method Delete -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential
+                if ($AsJob) {
+                    Start-Job -ArgumentList @($currentSite, $currentJobId) -ScriptBlock {
+                        param($currentSite, $currentJobId)
+                        Import-Module gridshell | Write-Verbose
+                        do {
+                            $pollResp = Get-OarJob -Site $currentSite -JobId $currentJobId
+                            Start-Sleep -Seconds 5 | Write-Verbose
+                        } until ($pollResp.state -eq "error" -or $pollResp.state -eq "terminated")
+                    }
+                }
+                else {
+                    $resp
+                }
             }
         }
     }
