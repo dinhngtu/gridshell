@@ -2,7 +2,7 @@ function Get-OarJob {
     [CmdletBinding(DefaultParameterSetName = "Query")]
     param(
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
-        [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter(ParameterSetName = "Query")][ValidateRange(0, 10000)][int]$Offset = 0,
         [Parameter(ParameterSetName = "Query")][ValidateRange(1, 500)][int]$Limit = 50,
         [Parameter(ParameterSetName = "Query")][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated")][string[]]$State = @("waiting", "launching", "running", "hold"),
@@ -13,7 +13,10 @@ function Get-OarJob {
         [Parameter()][pscredential]$Credential
     )
     begin {
-        if ($PSBoundParameters.Site -and ($Site.Count -ne $JobId.Count -and $Site.Count -ne 1)) {
+        if ($PSCmdlet.ParameterSetName -eq "Query" -and $Site.Count -gt 1) {
+            throw [System.ArgumentException]::new("You can only specify one site in your query")
+        }
+        elseif ($PSCmdlet.ParameterSetName -eq "Id" -and $PSBoundParameters.Site -and $Site.Count -ne $JobId.Count -and $Site.Count -ne 1) {
             throw [System.ArgumentException]::new("You can only specify one site per job ID")
         }
         elseif (!$Site.Count) {
@@ -33,7 +36,7 @@ function Get-OarJob {
                 user    = $User;
                 queue   = $Queue;
             }
-            return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs" -f $g5kApiRoot, $Site) -Credential $Credential -Body $params).items | ConvertTo-OarJobObject
+            return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs" -f $g5kApiRoot, $Site[0]) -Credential $Credential -Body $params).items | ConvertTo-OarJobObject
         }
         else {
             for ($i = 0; $i -lt $JobId.Count; $i++) {
