@@ -124,6 +124,9 @@ function Wait-OarJob {
             $PollInterval = 300
         }
     }
+    if (!$JobId.Count) {
+        return
+    }
     $towait = 0..($JobId.Count - 1) | ForEach-Object {
         if ($Site.Count -eq 1) {
             $currentSite = $Site[0]
