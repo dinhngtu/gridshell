@@ -109,7 +109,8 @@ function Wait-OarJob {
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][int[]]$JobId,
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter()][int]$Interval = 60,
-        [Parameter()][string[]]$Until = @("error", "terminated")
+        [Parameter()][string[]]$Until = @("error", "terminated"),
+        [Parameter()][pscredential]$Credential
     )
     begin {
         $towait = [System.Collections.Generic.List[object]]::new()
@@ -152,7 +153,7 @@ function Wait-OarJob {
                 -Activity "Waiting for jobs..." `
                 -Status "$doneCount of $totalCount jobs completed." `
                 -PercentComplete $pct
-            $towait = $towait | Get-OarJob | Where-Object state -NotIn $Until
+            $towait = $towait | Get-OarJob -Credential $Credential | Where-Object state -NotIn $Until
             if (!$towait.Count) {
                 break
             }
