@@ -5,7 +5,7 @@ function Get-OarJob {
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter(ParameterSetName = "Query")][ValidateRange(0, 10000)][int]$Offset = 0,
         [Parameter(ParameterSetName = "Query")][ValidateRange(1, 500)][int]$Limit = 50,
-        [Parameter(ParameterSetName = "Query")][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated")][string[]]$State = @("waiting", "launching", "running", "hold"),
+        [Parameter(ParameterSetName = "Query")][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated", "*")][string[]]$State = @("waiting", "launching", "running", "hold"),
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$Project,
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$User = $(Get-G5KCurrentUser),
         [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin", "besteffort")][string]$Queue,
@@ -13,21 +13,28 @@ function Get-OarJob {
         [Parameter()][pscredential]$Credential
     )
     begin {
-        if ($PSCmdlet.ParameterSetName -eq "Query" -and $Site.Count -gt 1) {
-            throw [System.ArgumentException]::new("You can only specify one site in your query")
-        }
-        elseif ($PSCmdlet.ParameterSetName -eq "Id" -and $PSBoundParameters.Site -and $Site.Count -ne $JobId.Count -and $Site.Count -ne 1) {
-            throw [System.ArgumentException]::new("You can only specify one site per job ID")
-        }
-        elseif (!$Site.Count) {
+        if (!$PSBoundParameters.Site -and !$Site.Count) {
             $Site = @(Get-G5KCurrentSite)
+        }
+        if ($PSCmdlet.ParameterSetName -eq "Query") {
+            if ($Site.Count -gt 1) {
+                throw [System.ArgumentException]::new("You can only specify at most one site in your query")
+            }
+            if ($User -eq "*") {
+                $User = ''
+            }
+            if ("*" -in $State) {
+                $State = @()
+            }
+        }
+        elseif ($PSCmdlet.ParameterSetName -eq "Id") {
+            if ($PSBoundParameters.Site -and $Site.Count -ne $JobId.Count -and $Site.Count -ne 1) {
+                throw [System.ArgumentException]::new("You can only specify one site per job ID")
+            }
         }
     }
     process {
         if ($PSCmdlet.ParameterSetName -eq "Query") {
-            if ($User -eq "*") {
-                $User = ''
-            }
             $params = Remove-EmptyValues @{
                 offset  = $Offset;
                 limit   = $Limit;
