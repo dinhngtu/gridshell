@@ -147,7 +147,7 @@ function Wait-OarJob {
         Write-Verbose "waiting for $($totalCount) jobs"
         while ($towait.Count) {
             $doneCount = $totalCount - $towait.Count
-            $pct = [System.Math]::Clamp(100.0 * $doneCount / $totalCount, 0, 99)
+            $pct = [System.Math]::Floor(100.0 * $doneCount / $totalCount)
             Write-Progress `
                 -Activity "Waiting for jobs..." `
                 -Status "$doneCount of $totalCount jobs completed." `
