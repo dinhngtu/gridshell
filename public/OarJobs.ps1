@@ -94,6 +94,7 @@ function Remove-OarJob {
             if ($AsJob) {
                 return Start-Job -ArgumentList @($Site, $JobId) -ScriptBlock {
                     param($Site, $JobId)
+                    Import-Module gridshell
                     do {
                         $pollResp = Get-OarJob -Site $Site -JobId $JobId
                         Start-Sleep -Seconds 5
