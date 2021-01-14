@@ -8,7 +8,7 @@ function Get-OarJob {
         [Parameter(ParameterSetName = "Query")][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated")][string[]]$State = @("waiting", "launching", "running", "hold"),
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$Project,
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$User = $(Get-G5KCurrentUser),
-        [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin")][string]$Queue,
+        [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin", "besteffort")][string]$Queue,
         [Parameter(ParameterSetName = "Query")][switch]$Resources,
         [Parameter()][pscredential]$Credential
     )
@@ -69,7 +69,7 @@ function New-OarJob {
         [Parameter()][ValidateSet("day", "night", "weekend", "besteffort", "cosystem", "container", "inner", "noop", "allow_classic_ssh", "deploy")][string[]]$Type = @(),
         [Parameter()][string]$Project,
         [Parameter()][string]$Name,
-        [Parameter()][ValidateSet("default", "production", "admin")][string]$Queue = "default",
+        [Parameter()][ValidateSet("default", "production", "admin", "besteffort")][string]$Queue = "default",
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
