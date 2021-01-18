@@ -138,6 +138,7 @@ function Wait-OarJob {
         }
     }
     end {
+        $towait = $towait | Get-OarJob -Credential $Credential | Where-Object state -NotIn $Until
         $totalCount = $towait.Count
         if ($towait.Count -gt 10) {
             Write-Warning "Too many jobs, be careful of overusing the Grid'5000 API!"
@@ -146,12 +147,12 @@ function Wait-OarJob {
                 $Interval = 300
             }
         }
-
-        $towait = $towait | Get-OarJob -Credential $Credential
         $totalWalltime = ($towait | Measure-Object -Sum walltime).Sum
+        if (!$totalWalltime) {
+            $totalWalltime = 1
+        }
         $totalDuration = (New-TimeSpan -Seconds $totalWalltime).ToString()
 
-        Write-Verbose "waiting for $($totalCount) jobs"
         while ($towait.Count) {
             $doneCount = $totalCount - $towait.Count
             $breakdown = $towait | `
