@@ -148,18 +148,19 @@ function Wait-OarJob {
         }
 
         $towait = $towait | Get-OarJob -Credential $Credential
-        $totalDuration = ($towait | Measure-Object -Sum walltime).Sum
+        $totalWalltime = ($towait | Measure-Object -Sum walltime).Sum
+        $totalDuration = (New-TimeSpan -Seconds $totalWalltime).ToString()
 
         Write-Verbose "waiting for $($totalCount) jobs"
         while ($towait.Count) {
             $doneCount = $totalCount - $towait.Count
-            $pct = [System.Math]::Floor(100.0 * $doneCount / $totalCount)
             $breakdown = $towait | `
                 Group-Object -Property state | `
                 ForEach-Object { "$($_.Count) $($_.Name)" } | `
                 Join-String -Separator ', '
 
             if ($NoEstimate) {
+                $pct = [System.Math]::Floor(100.0 * $doneCount / $totalCount)
                 Write-Progress `
                     -Activity "Waiting for jobs..." `
                     -Status "$doneCount of $totalCount jobs completed ($breakdown)." `
@@ -167,22 +168,32 @@ function Wait-OarJob {
             }
             else {
                 $now = ([System.DateTimeOffset](Get-Date)).ToUnixTimeSeconds()
-                $remainingWait = $towait | ForEach-Object {
+                $waits = $towait | ForEach-Object {
                     if ($_.state -In $Until) {
                         0
                     }
                     elseif ($_.started_at -gt 0) {
-                        $_.started_at + $_.walltime - $now
+                        $w = $_.started_at + $_.walltime - $now
+                        if ($w -lt 0) {
+                            $w = 0
+                        }
+                        elseif ($w -gt $_.walltime) {
+                            $w = $_.walltime
+                        }
+                        $w
                     }
                     else {
                         $_.walltime
                     }
-                } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
-                $timePct = [System.Math]::Floor(100.0 * ($totalDuration - $remainingWait) / $totalDuration)
-                $eta = (New-TimeSpan -Seconds $remainingWait).ToString()
+                } | Measure-Object -Sum -Maximum
+
+                $remainingWalltime = $totalWalltime - $waits.Sum
+                $elapsedDuration = (New-TimeSpan -Seconds $remainingWalltime).ToString()
+                $timePct = [System.Math]::Floor(100.0 * $remainingWalltime / $totalWalltime)
                 Write-Progress `
                     -Activity "Waiting for jobs..." `
-                    -Status "$doneCount of $totalCount jobs completed ($breakdown) (ETA: $eta)" `
+                    -Status "$doneCount of $totalCount jobs ($elapsedDuration/$totalDuration) completed ($breakdown)" `
+                    -SecondsRemaining $waits.Maximum `
                     -PercentComplete $timePct
             }
 
