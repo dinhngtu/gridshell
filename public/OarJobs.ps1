@@ -110,6 +110,7 @@ function Wait-OarJob {
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter()][int]$Interval = 60,
         [Parameter()][string[]]$Until = @("error", "terminated"),
+        [Parameter()][switch]$NoEstimate,
         [Parameter()][pscredential]$Credential
     )
     begin {
@@ -145,19 +146,49 @@ function Wait-OarJob {
                 $Interval = 300
             }
         }
+
+        $towait = $towait | Get-OarJob -Credential $Credential
+        $totalDuration = ($towait | Measure-Object -Sum walltime).Sum
+
         Write-Verbose "waiting for $($totalCount) jobs"
         while ($towait.Count) {
             $doneCount = $totalCount - $towait.Count
             $pct = [System.Math]::Floor(100.0 * $doneCount / $totalCount)
-            Write-Progress `
-                -Activity "Waiting for jobs..." `
-                -Status "$doneCount of $totalCount jobs completed." `
-                -PercentComplete $pct
-            $towait = $towait | Get-OarJob -Credential $Credential | Where-Object state -NotIn $Until
-            if (!$towait.Count) {
-                break
+            $breakdown = $towait | `
+                Group-Object -Property state | `
+                ForEach-Object { "$($_.Count) $($_.Name)" } | `
+                Join-String -Separator ', '
+
+            if ($NoEstimate) {
+                Write-Progress `
+                    -Activity "Waiting for jobs..." `
+                    -Status "$doneCount of $totalCount jobs completed ($breakdown)." `
+                    -PercentComplete $pct
             }
+            else {
+                $now = ([System.DateTimeOffset](Get-Date)).ToUnixTimeSeconds()
+                $remainingWait = $towait | ForEach-Object {
+                    if ($_.state -In $Until) {
+                        0
+                    }
+                    elseif ($_.started_at -gt 0) {
+                        $_.started_at + $_.walltime - $now
+                    }
+                    else {
+                        $_.walltime
+                    }
+                } | Measure-Object -Sum | Select-Object -ExpandProperty Sum
+                $timePct = [System.Math]::Floor(100.0 * ($totalDuration - $remainingWait) / $totalDuration)
+                $eta = (New-TimeSpan -Seconds $remainingWait).ToString()
+                Write-Progress `
+                    -Activity "Waiting for jobs..." `
+                    -Status "$doneCount of $totalCount jobs completed ($breakdown) (ETA: $eta)" `
+                    -PercentComplete $timePct
+            }
+
             Start-Sleep -Seconds $Interval
+
+            $towait = $towait | Get-OarJob -Credential $Credential | Where-Object state -NotIn $Until
         }
     }
 }
