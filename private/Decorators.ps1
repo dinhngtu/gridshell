@@ -31,6 +31,7 @@ function ConvertTo-OarJobObject {
         $_ | Add-ObjectDetail -TypeName "Oar.Job" -PropertyToAdd @{
             JobId = $_.uid;
             SubmittedAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.submitted_at).DateTime.ToLocalTime();
+            ScheduledAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.scheduled_at).DateTime.ToLocalTime();
             StartedAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.started_at).DateTime.ToLocalTime();
             StoppedAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.stopped_at).DateTime.ToLocalTime();
             Duration = [timespan]::FromSeconds($_.walltime);

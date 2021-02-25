@@ -98,10 +98,13 @@
                                 <PropertyName>state</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
+                                <PropertyName>Duration</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
                                 <PropertyName>SubmittedAt</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Duration</PropertyName>
+                                <PropertyName>ScheduledAt</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>StartedAt</PropertyName>
