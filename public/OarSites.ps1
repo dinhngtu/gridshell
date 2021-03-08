@@ -16,7 +16,7 @@ function Get-OarSite {
         }
     }
     else {
-        $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}" -f $g5kApiRoot, $Site, $Branch) -Credential $Credential -Body @{
+        $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}" -f $g5kApiRoot, $Site) -Credential $Credential -Body @{
             branch = $Branch
         }
         if ($Site) {
