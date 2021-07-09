@@ -36,7 +36,7 @@ function Get-OarSite {
         }
     }
     else {
-        $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}" -f $g5kApiRoot, $Site) -Credential $Credential -Body $params
+        $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params
         if ($Site) {
             return $resp | ConvertTo-OarSiteObject
         }
@@ -67,7 +67,7 @@ function Get-OarCluster {
         timestamp = $UnixTimestamp;
         version   = $Version;
     }
-    $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}" -f $g5kApiRoot, $Site, $Cluster) -Credential $Credential -Body $params
+    $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}" -f $script:g5kApiRoot, $Site, $Cluster) -Credential $Credential -Body $params
     if ($Cluster) {
         return $resp | ConvertTo-OarClusterObject
     }
@@ -98,7 +98,7 @@ function Get-OarNode {
         timestamp = $UnixTimestamp;
         version   = $Version;
     }
-    $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}/nodes/{3}" -f $g5kApiRoot, $Site, $Cluster, $Node) -Credential $Credential -Body $params
+    $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}/nodes/{3}" -f $script:g5kApiRoot, $Site, $Cluster, $Node) -Credential $Credential -Body $params
     if ($Node) {
         return $resp | ConvertTo-OarNodeObject
     }
@@ -128,7 +128,7 @@ function Get-OarPdu {
         timestamp = $UnixTimestamp;
         version   = $Version;
     }
-    $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/pdus/{2}" -f $g5kApiRoot, $Site, $Pdu) -Credential $Credential -Body $params
+    $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/pdus/{2}" -f $script:g5kApiRoot, $Site, $Pdu) -Credential $Credential -Body $params
     if ($Pdu) {
         return $resp
     }
@@ -158,7 +158,7 @@ function Get-OarNetworkEquipment {
         timestamp = $UnixTimestamp;
         version   = $Version;
     }
-    $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/network_equipments/{2}" -f $g5kApiRoot, $Site, $EquipmentId) -Credential $Credential -Body $params
+    $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/network_equipments/{2}" -f $script:g5kApiRoot, $Site, $EquipmentId) -Credential $Credential -Body $params
     if ($Pdu) {
         return $resp
     }

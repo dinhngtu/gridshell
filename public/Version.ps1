@@ -14,7 +14,7 @@ function Get-OarVersion {
         limit  = $Limit;
         offset = $Offset;
     }
-    $resp = Invoke-RestMethod -Uri ("{0}/3.0/versions/{1}" -f $g5kApiRoot, $VersionId) -Credential $Credential -Body $params
+    $resp = Invoke-RestMethod -Uri ("{0}/3.0/versions/{1}" -f $script:g5kApiRoot, $VersionId) -Credential $Credential -Body $params
     if ($VersionId) {
         return $resp
     }
@@ -42,7 +42,7 @@ function Get-OarSiteVersion {
         limit  = $Limit;
         offset = $Offset;
     }
-    $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/versions/{2}" -f $g5kApiRoot, $Site, $VersionId) -Credential $Credential -Body $params
+    $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/versions/{2}" -f $script:g5kApiRoot, $Site, $VersionId) -Credential $Credential -Body $params
     if ($VersionId) {
         return $resp
     }

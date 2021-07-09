@@ -46,7 +46,7 @@ function Get-OarJob {
     }
     process {
         if ($PSCmdlet.ParameterSetName -eq "Query") {
-            return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs" -f $g5kApiRoot, $Site[0]) -Credential $Credential -Body $params).items | ConvertTo-OarJobObject
+            return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs" -f $script:g5kApiRoot, $Site[0]) -Credential $Credential -Body $params).items | ConvertTo-OarJobObject
         }
         else {
             for ($i = 0; $i -lt $JobId.Count; $i++) {
@@ -57,7 +57,7 @@ function Get-OarJob {
                 else {
                     $currentSite = $Site[$i]
                 }
-                Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential | ConvertTo-OarJobObject
+                Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $script:g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential | ConvertTo-OarJobObject
             }
         }
     }
@@ -100,7 +100,7 @@ function New-OarJob {
     }
     $params | Out-String | Write-Verbose
     if ($PSCmdlet.ShouldProcess(("command '{0}', type '{1}'" -f $Command, $Type -join ","), "New-OarJob")) {
-        return Invoke-RestMethod -Method Post -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $Site, $Id) -Credential $Credential -Body (ConvertTo-Json -InputObject $params) -ContentType "application/json" | ConvertTo-OarJobObject
+        return Invoke-RestMethod -Method Post -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $script:g5kApiRoot, $Site, $Id) -Credential $Credential -Body (ConvertTo-Json -InputObject $params) -ContentType "application/json" | ConvertTo-OarJobObject
     }
 }
 Export-ModuleMember -Function New-OarJob
@@ -242,7 +242,7 @@ function Remove-OarJob {
                 $currentSite = $Site[$i]
             }
             if ($PSCmdlet.ShouldProcess("job '{0}', site '{1}'" -f @($currentJobId, $currentSite), "Remove-OarJob")) {
-                $resp = Invoke-RestMethod -Method Delete -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential
+                $resp = Invoke-RestMethod -Method Delete -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $script:g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential
                 if ($PassThru) {
                     Get-OarJob -JobId $currentJobId -Site $currentSite
                 }

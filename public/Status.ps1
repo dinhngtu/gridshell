@@ -19,7 +19,7 @@ function Get-OarSiteStatus {
         vlans   = $Vlans ? "yes" : "no";
         subnets = $Subnets ? "yes" : "no";
     }
-    return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/status" -f $g5kApiRoot, $Site) -Credential $Credential -Body $params
+    return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/status" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params
 }
 Export-ModuleMember -Function Get-OarSiteStatus
 
@@ -39,6 +39,6 @@ function Get-OarClusterStatus {
         disks = $Disks ? "yes" : "no";
         nodes = $Nodes ? "yes" : "no";
     }
-    return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}/status" -f $g5kApiRoot, $Site, $Cluster) -Credential $Credential -Body $params
+    return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}/status" -f $script:g5kApiRoot, $Site, $Cluster) -Credential $Credential -Body $params
 }
 Export-ModuleMember -Function Get-OarClusterStatus

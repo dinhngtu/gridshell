@@ -24,6 +24,6 @@ function Get-KwollectMetrics {
         metrics    = $Metrics.Count -gt 0 ? ($Metrics -join ",") : "";
         summary    = !!$Summary;
     }
-    return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/metrics" -f $g5kApiRoot, $Site) -Credential $Credential -Body $params -OutFile $OutFile
+    return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/metrics" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params -OutFile $OutFile
 }
 Export-ModuleMember -Function Get-KwollectMetrics

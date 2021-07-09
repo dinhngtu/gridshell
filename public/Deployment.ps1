@@ -15,7 +15,7 @@ function Get-KaEnvironment {
         $Site = Get-G5KCurrentSite
     }
     if ($PSCmdlet.ParameterSetName -eq "Get") {
-        return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments/{2}" -f $g5kApiRoot, $Site, $Uid) -Credential $Credential
+        return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments/{2}" -f $script:g5kApiRoot, $Site, $Uid) -Credential $Credential
     }
     elseif ($PSCmdlet.ParameterSetName -eq "List") {
         $params = Remove-EmptyValues @{
@@ -24,7 +24,7 @@ function Get-KaEnvironment {
             user         = $User;
             latest_only  = $AllVersions ? "no" : "yes";
         }
-        return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments" -f $g5kApiRoot, $Site) -Credential $Credential -Body $params).items
+        return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params).items
     }
 }
 Export-ModuleMember -Function Get-KaEnvironment
@@ -69,7 +69,7 @@ function Get-KaDeployment {
     }
     process {
         if ($PSCmdlet.ParameterSetName -eq "Query") {
-            return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/deployments" -f $g5kApiRoot, $Site[0]) -Credential $Credential -Body $params).items | ConvertTo-KaDeployment
+            return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/deployments" -f $script:g5kApiRoot, $Site[0]) -Credential $Credential -Body $params).items | ConvertTo-KaDeployment
         }
         else {
             for ($i = 0; $i -lt $DeploymentId.Count; $i++) {
@@ -80,7 +80,7 @@ function Get-KaDeployment {
                 else {
                     $currentSite = $Site[$i]
                 }
-                Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/deployments/{2}" -f $g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential | ConvertTo-KaDeployment
+                Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/deployments/{2}" -f $script:g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential | ConvertTo-KaDeployment
             }
         }
     }
@@ -132,7 +132,7 @@ function Start-KaDeployment {
     }
     $params | Out-String | Write-Verbose
     if ($PSCmdlet.ShouldProcess(("environment '{0}' version {1} on {2} nodes" -f $EnvironmentName, $EnvironmentVersion, $Nodes.Count), "Start-KaDeployment")) {
-        return Invoke-RestMethod -Method Post -Uri ("{0}/3.0/sites/{1}/deployments" -f $g5kApiRoot, $Site) -Credential $Credential -Body (ConvertTo-Json -InputObject $params) -ContentType "application/json"
+        return Invoke-RestMethod -Method Post -Uri ("{0}/3.0/sites/{1}/deployments" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body (ConvertTo-Json -InputObject $params) -ContentType "application/json"
     }
 }
 Export-ModuleMember -Function Start-KaDeployment
@@ -233,7 +233,7 @@ function Stop-KaDeployment {
                 $currentSite = $Site[$i]
             }
             if ($PSCmdlet.ShouldProcess("deployment '{0}', site '{1}'" -f @($currentJobId, $currentSite), "Stop-KaDeployment")) {
-                $resp = Invoke-RestMethod -Method Delete -Uri ("{0}/3.0/sites/{1}/deployments/{2}" -f $g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential
+                $resp = Invoke-RestMethod -Method Delete -Uri ("{0}/3.0/sites/{1}/deployments/{2}" -f $script:g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential
                 if ($PassThru) {
                     Get-KaDeployment -DeploymentId $currentJobId -Site $currentSite
                 }
