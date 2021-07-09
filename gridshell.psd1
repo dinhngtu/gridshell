@@ -24,7 +24,7 @@ GUID = '458da881-fca2-4ac3-867c-d7824002af20'
 Author = 'dinhngoc.tu@irit.fr'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'IRIT'
 
 # Copyright statement for this module
 Copyright = '(c) dinhngoc.tu@irit.fr. All rights reserved.'

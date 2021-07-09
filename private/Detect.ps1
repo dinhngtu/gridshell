@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 function Get-G5KCurrentSite {
     param()
     $fqdn = [System.Net.Dns]::GetHostByName($null).HostName

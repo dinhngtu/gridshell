@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 function ConvertTo-OarSiteObject {
     process {
         $_ | Add-ObjectDetail -TypeName "G5K.Oar.Site" -PropertyToAdd @{

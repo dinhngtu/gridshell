@@ -1,3 +1,5 @@
+# https://stackoverflow.com/q/44509704/8642889
+
 $ErrorActionPreference = "Stop"
 
 #Get public and private function definition files.
@@ -18,5 +20,3 @@ foreach ($import in @($public + $private)) {
 # Read in or create an initial config file and variable
 # Export Public functions ($Public.BaseName) for WIP modules
 # Set variables visible to the module and its functions only
-
-Export-ModuleMember -Function $public.Basename

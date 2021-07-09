@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 function Remove-EmptyValues {
     param(
         [Parameter(Mandatory, ValueFromPipeline, Position = 0)][System.Collections.IDictionary]$InputObject
