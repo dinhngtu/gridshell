@@ -20,7 +20,7 @@ function Get-KwollectMetrics {
         end_time   = $EndTime ? $EndTime.ToString("s") : "";
         job_id     = $PSBoundParameters.ContainsKey("JobId") ? $JobId : "";
         metrics    = $Metrics.Count -gt 0 ? ($Metrics -join ",") : "";
-        summary    = $Summary ? $true : $false;
+        summary    = !!$Summary;
     }
     return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/metrics" -f $g5kApiRoot, $Site) -Credential $Credential -Body $params -OutFile $OutFile
 }

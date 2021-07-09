@@ -4,12 +4,12 @@ function Get-OarJob {
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter()][switch]$Resources,
-        [Parameter(ParameterSetName = "Query")][ValidateRange(0, 10000)][int]$Offset = 0,
+        [Parameter(ParameterSetName = "Query")][ValidateRange(0, 999999999)][int]$Offset = 0,
         [Parameter(ParameterSetName = "Query")][ValidateRange(1, 500)][int]$Limit = 50,
         [Parameter(ParameterSetName = "Query")][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated", "*")][string[]]$State = @("waiting", "launching", "running", "hold"),
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$Project,
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$User = $(Get-G5KCurrentUser),
-        [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin", "besteffort")][string]$Queue,
+        [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin", "besteffort", "testing")][string]$Queue,
         [Parameter()][pscredential]$Credential
     )
     begin {

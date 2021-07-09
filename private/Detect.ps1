@@ -4,7 +4,7 @@ function Get-G5KCurrentSite {
     $fqdnParts = $fqdn.Split('.')
     $currentSite = $null
     if ($fqdnParts.Count -ge 4 -and $fqdn.EndsWith('.grid5000.fr')) {
-        $currentSite = $fqdnParts[1]
+        $currentSite = $fqdnParts[-3]
     }
     return $currentSite
 }
