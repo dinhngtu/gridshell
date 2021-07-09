@@ -35,7 +35,7 @@ function Get-KaDeployment {
         [Parameter()][ValidateRange(0, 999999999)][int]$Offset = 0,
         [Parameter()][ValidateRange(1, 500)][int]$Limit = 50,
         [Parameter()][Alias("State")][ValidateSet("waiting", "processing", "canceled", "terminated", "error", "*")][string[]]$Status = @("waiting", "processing"),
-        [Parameter()][ValidatePattern("\w*")][string]$User = $(Get-G5KCurrentUser),
+        [Parameter()][ValidatePattern("\w*")][string]$User = $((Get-G5KCurrentUser).uid),
         [Parameter()][pscredential]$Credential
     )
     begin {
@@ -94,16 +94,16 @@ function Start-KaDeployment {
         [Parameter(Mandatory, ParameterSetName = "EnvironmentName")][string]$EnvironmentName,
         [Parameter(ParameterSetName = "EnvironmentName")][int]$EnvironmentVersion,
         [Parameter(Mandatory, ParameterSetName = "EnvironmentObject")]$Environment,
-        [Parameter()][string]$AuthorizedKeys,
+        [Parameter()][string]$AuthorizedKeys = $((Get-G5KUser).key),
         [Parameter()][string]$BlockDevice,
-        [Parameter()][int]$PartitionNumber,
-        [Parameter()][int]$Vlan,
+        [Parameter()][System.Nullable[int]]$PartitionNumber,
+        [Parameter()][System.Nullable[int]]$Vlan,
         [Parameter()][string]$TmpFilesystemType,
         [Parameter()][switch]$DisableDiskPartitioning,
         [Parameter()][switch]$DisableBootloaderInstall,
         [Parameter()][switch]$IgnoreNodesDeploying,
-        [Parameter()][int]$RebootClassicalTimeout,
-        [Parameter()][int]$RebootKexecTimeout,
+        [Parameter()][System.Nullable[int]]$RebootClassicalTimeout,
+        [Parameter()][System.Nullable[int]]$RebootKexecTimeout,
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
@@ -125,8 +125,8 @@ function Start-KaDeployment {
         disable_disk_partitioning  = !!$DisableDiskPartitioning;
         disable_bootloader_install = !!$DisableBootloaderInstall;
         ignore_nodes_deploying     = !!$IgnoreNodesDeploying;
-        reboot_classical_timeout   = $RebootClassicalTimeout ? $RebootClassicalTimeout : $null;
-        reboot_kexec_timeout       = $RebootKexecTimeout ? $RebootKexecTimeout : $null;
+        reboot_classical_timeout   = $RebootClassicalTimeout;
+        reboot_kexec_timeout       = $RebootKexecTimeout;
     }
     $params | Out-String | Write-Verbose
     if ($PSCmdlet.ShouldProcess(("environment '{0}' version {1} on {2} nodes" -f $EnvironmentName, $EnvironmentVersion, $Nodes.Count), "Start-KaDeployment")) {

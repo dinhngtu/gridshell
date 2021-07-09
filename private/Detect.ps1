@@ -11,9 +11,11 @@ function Get-G5KCurrentSite {
 
 function Get-G5KCurrentUser {
     param()
-    if ($null -ne (Get-G5KCurrentSite)) {
-        return [System.Environment]::UserName
-    } else {
+    $user = Get-G5KUser
+    if ($null -ne ($user)) {
+        return $user.uid
+    }
+    else {
         return $null
     }
 }

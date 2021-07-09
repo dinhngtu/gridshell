@@ -8,7 +8,7 @@ function Get-OarSite {
         [System.Nullable[datetime]]$Date,
         [Parameter(Mandatory, ParameterSetName = "DefaultUnixTimestamp")]
         [Parameter(Mandatory, ParameterSetName = "CurrentUnixTimestamp")]
-        [long]$UnixTimestamp,
+        [System.Nullable[long]]$UnixTimestamp,
         [Parameter(Mandatory, ParameterSetName = "DefaultVersion")]
         [Parameter(Mandatory, ParameterSetName = "CurrentVersion")]
         [string]$Version,
@@ -21,7 +21,7 @@ function Get-OarSite {
     $params = Remove-EmptyValues @{
         branch    = $Branch;
         date      = $Date ? $Date.ToString("s") : $null;
-        timestamp = $UnixTimestamp ? $UnixTimestamp : $null;
+        timestamp = $UnixTimestamp;
         version   = $Version;
     }
     if ($PSCmdlet.ParameterSetName -like "Current*") {
@@ -52,7 +52,7 @@ function Get-OarCluster {
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         [Parameter(ParameterSetName = "Date")][System.Nullable[datetime]]$Date,
-        [Parameter(ParameterSetName = "UnixTimestamp")][long]$UnixTimestamp,
+        [Parameter(ParameterSetName = "UnixTimestamp")][System.Nullable[long]]$UnixTimestamp,
         [Parameter(ParameterSetName = "Version")][string]$Version,
         [Parameter()][pscredential]$Credential
     )
@@ -62,7 +62,7 @@ function Get-OarCluster {
     $params = Remove-EmptyValues @{
         branch    = $Branch;
         date      = $Date ? $Date.ToString("s") : $null;
-        timestamp = $UnixTimestamp ? $UnixTimestamp : $null;
+        timestamp = $UnixTimestamp;
         version   = $Version;
     }
     $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}" -f $g5kApiRoot, $Site, $Cluster) -Credential $Credential -Body $params
@@ -83,7 +83,7 @@ function Get-OarNode {
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         [Parameter(ParameterSetName = "Date")][System.Nullable[datetime]]$Date,
-        [Parameter(ParameterSetName = "UnixTimestamp")][long]$UnixTimestamp,
+        [Parameter(ParameterSetName = "UnixTimestamp")][System.Nullable[long]]$UnixTimestamp,
         [Parameter(ParameterSetName = "Version")][string]$Version,
         [Parameter()][pscredential]$Credential
     )
@@ -93,7 +93,7 @@ function Get-OarNode {
     $params = Remove-EmptyValues @{
         branch    = $Branch;
         date      = $Date ? $Date.ToString("s") : $null;
-        timestamp = $UnixTimestamp ? $UnixTimestamp : $null;
+        timestamp = $UnixTimestamp;
         version   = $Version;
     }
     $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}/nodes/{3}" -f $g5kApiRoot, $Site, $Cluster, $Node) -Credential $Credential -Body $params
@@ -113,7 +113,7 @@ function Get-OarPdu {
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         [Parameter(ParameterSetName = "Date")][System.Nullable[datetime]]$Date,
-        [Parameter(ParameterSetName = "UnixTimestamp")][long]$UnixTimestamp,
+        [Parameter(ParameterSetName = "UnixTimestamp")][System.Nullable[long]]$UnixTimestamp,
         [Parameter(ParameterSetName = "Version")][string]$Version,
         [Parameter()][pscredential]$Credential
     )
@@ -123,7 +123,7 @@ function Get-OarPdu {
     $params = Remove-EmptyValues @{
         branch    = $Branch;
         date      = $Date ? $Date.ToString("s") : $null;
-        timestamp = $UnixTimestamp ? $UnixTimestamp : $null;
+        timestamp = $UnixTimestamp;
         version   = $Version;
     }
     $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/pdus/{2}" -f $g5kApiRoot, $Site, $Pdu) -Credential $Credential -Body $params
@@ -143,7 +143,7 @@ function Get-OarNetworkEquipment {
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         [Parameter(ParameterSetName = "Date")][System.Nullable[datetime]]$Date,
-        [Parameter(ParameterSetName = "UnixTimestamp")][long]$UnixTimestamp,
+        [Parameter(ParameterSetName = "UnixTimestamp")][System.Nullable[long]]$UnixTimestamp,
         [Parameter(ParameterSetName = "Version")][string]$Version,
         [Parameter()][pscredential]$Credential
     )
@@ -153,7 +153,7 @@ function Get-OarNetworkEquipment {
     $params = Remove-EmptyValues @{
         branch    = $Branch;
         date      = $Date ? $Date.ToString("s") : $null;
-        timestamp = $UnixTimestamp ? $UnixTimestamp : $null;
+        timestamp = $UnixTimestamp;
         version   = $Version;
     }
     $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/network_equipments/{2}" -f $g5kApiRoot, $Site, $EquipmentId) -Credential $Credential -Body $params
