@@ -39,6 +39,9 @@
                             <TableColumnItem>
                                 <PropertyName>model</PropertyName>
                             </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>created_at</PropertyName>
+                            </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
                 </TableRowEntries>

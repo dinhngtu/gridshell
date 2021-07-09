@@ -83,20 +83,21 @@ function New-OarJob {
     if (!$Site) {
         $Site = Get-G5KCurrentSite
     }
+    $params = Remove-EmptyValues @{
+        command     = $Command;
+        resources   = $Resources;
+        directory   = $Directory;
+        stdout      = $Output;
+        stderr      = $ErrorOutput;
+        properties  = $Properties;
+        reservation = $Reservation ? ([System.DateTimeOffset]$Reservation).ToUnixTimeSeconds() : $null;
+        types       = $Type;
+        project     = $Project;
+        name        = $Name;
+        queue       = $Queue;
+    }
+    $params | Out-String | Write-Verbose
     if ($PSCmdlet.ShouldProcess(("command '{0}', type '{1}'" -f $Command, $Type -join ","), "New-OarJob")) {
-        $params = Remove-EmptyValues @{
-            command     = $Command;
-            resources   = $Resources;
-            directory   = $Directory;
-            stdout      = $Output;
-            stderr      = $ErrorOutput;
-            properties  = $Properties;
-            reservation = $Reservation ? ([System.DateTimeOffset]$Reservation).ToUnixTimeSeconds() : $null;
-            types       = $Type;
-            project     = $Project;
-            name        = $Name;
-            queue       = $Queue;
-        }
         return Invoke-RestMethod -Method Post -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $Site, $Id) -Credential $Credential -Body (ConvertTo-Json -InputObject $params) -ContentType "application/json" | ConvertTo-OarJobObject
     }
 }
@@ -110,7 +111,7 @@ function Wait-OarJob {
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][int[]]$JobId,
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter()][int]$Interval = 60,
-        [Parameter()][string[]]$Until = @("error", "terminated"),
+        [Parameter()][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated")][string[]]$Until = @("error", "terminated"),
         [Parameter()][switch]$NoEstimate,
         [Parameter()][pscredential]$Credential
     )
@@ -162,7 +163,10 @@ function Wait-OarJob {
                 Join-String -Separator ', '
 
             if ($NoEstimate) {
-                $pct = [System.Math]::Floor(100.0 * $doneCount / $totalCount)
+                $pct = [int][System.Math]::Floor(100.0 * $doneCount / $totalCount)
+                if ($pct -eq 0) {
+                    $pct = 1
+                }
                 Write-Progress `
                     -Activity "Waiting for jobs..." `
                     -Status "$doneCount of $totalCount jobs completed ($breakdown)." `
@@ -191,7 +195,10 @@ function Wait-OarJob {
 
                 $remainingWalltime = $totalWalltime - $waits.Sum
                 $elapsedDuration = (New-TimeSpan -Seconds $remainingWalltime).ToString()
-                $timePct = [System.Math]::Floor(100.0 * $remainingWalltime / $totalWalltime)
+                $timePct = [int][System.Math]::Floor(100.0 * $remainingWalltime / $totalWalltime)
+                if ($timePct -eq 0) {
+                    $timePct = 1
+                }
                 Write-Progress `
                     -Activity "Waiting for jobs..." `
                     -Status "$doneCount of $totalCount jobs ($elapsedDuration/$totalDuration) completed ($breakdown)" `
@@ -213,7 +220,6 @@ function Remove-OarJob {
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
         [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter()][pscredential]$Credential,
-        [Parameter()][switch]$AsJob,
         [Parameter()][switch]$PassThru
     )
     begin {
@@ -235,14 +241,7 @@ function Remove-OarJob {
             }
             if ($PSCmdlet.ShouldProcess("job '{0}', site '{1}'" -f @($currentJobId, $currentSite), "Remove-OarJob")) {
                 $resp = Invoke-RestMethod -Method Delete -Uri ("{0}/3.0/sites/{1}/jobs/{2}" -f $g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential
-                if ($AsJob) {
-                    Start-Job -ArgumentList @($currentSite, $currentJobId) -ScriptBlock {
-                        param($currentSite, $currentJobId)
-                        Import-Module gridshell | Write-Verbose
-                        Wait-OarJob -JobId $currentJobId -Site $currentSite
-                    }
-                }
-                elseif ($PassThru) {
+                if ($PassThru) {
                     Get-OarJob -JobId $currentJobId -Site $currentSite
                 }
                 else {
