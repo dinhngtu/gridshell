@@ -4,7 +4,7 @@ function Get-G5KUser {
         [Parameter(Position = 0)][ValidatePattern("\w*")]$UserName = "~",
         [Parameter()][pscredential]$Credential
     )
-    return Invoke-RestMethod -Uri ("{0}/3.0/users/users/{1}" -f $g5kApiRoot, $UserName) -Credential $Credential
+    return Invoke-RestMethod -Uri ("{0}/3.0/users/users/{1}" -f $g5kApiRoot, $UserName) -Credential $Credential | ConvertTo-G5KUser
 }
 Export-ModuleMember -Function Get-G5KUser
 
@@ -19,10 +19,10 @@ function Get-G5KGroup {
     }
     $resp = Invoke-RestMethod -Uri ("{0}/3.0/users/groups/{1}" -f $g5kApiRoot, $GroupName) -Credential $Credential
     if ($GroupName) {
-        return $resp
+        return $resp | ConvertTo-G5KGroup
     }
     else {
-        return $resp.items
+        return $resp.items | ConvertTo-G5KGroup
     }
 }
 Export-ModuleMember -Function Get-G5KGroup
@@ -33,7 +33,7 @@ function Get-G5KUserGroups {
         [Parameter(Position = 0)][ValidatePattern("\w*")]$UserName = "~",
         [Parameter()][pscredential]$Credential
     )
-    return (Invoke-RestMethod -Uri ("{0}/3.0/users/users/{1}/groups" -f $g5kApiRoot, $UserName) -Credential $Credential).items
+    return (Invoke-RestMethod -Uri ("{0}/3.0/users/users/{1}/groups" -f $g5kApiRoot, $UserName) -Credential $Credential).items | ConvertTo-G5KGroupMembership
 }
 Export-ModuleMember -Function Get-G5KUserGroups
 

@@ -30,7 +30,7 @@ Export-ModuleMember -Function Get-KaEnvironment
 function Get-KaDeployment {
     [CmdletBinding(DefaultParameterSetName = "Query")]
     param(
-        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][Alias("uid")][string[]]$DeploymentId,
+        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][string[]]$DeploymentId,
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter()][ValidateRange(0, 999999999)][int]$Offset = 0,
         [Parameter()][ValidateRange(1, 500)][int]$Limit = 50,
@@ -67,7 +67,7 @@ function Get-KaDeployment {
     }
     process {
         if ($PSCmdlet.ParameterSetName -eq "Query") {
-            return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/deployments" -f $g5kApiRoot, $Site[0]) -Credential $Credential -Body $params).items
+            return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/deployments" -f $g5kApiRoot, $Site[0]) -Credential $Credential -Body $params).items | ConvertTo-KaDeployment
         }
         else {
             for ($i = 0; $i -lt $DeploymentId.Count; $i++) {
@@ -78,7 +78,7 @@ function Get-KaDeployment {
                 else {
                     $currentSite = $Site[$i]
                 }
-                Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/deployments/{2}" -f $g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential
+                Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/deployments/{2}" -f $g5kApiRoot, $currentSite, $currentJobId) -Credential $Credential | ConvertTo-KaDeployment
             }
         }
     }
@@ -140,7 +140,7 @@ Export-ModuleMember -Alias New-KaDeployment
 function Wait-KaDeployment {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][Alias("uid")][string[]]$DeploymentId,
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][string[]]$DeploymentId,
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter()][int]$Interval = 60,
         [Parameter()][ValidateSet("waiting", "processing", "canceled", "terminated", "error")][string[]]$Until = @("canceled", "terminated", "error"),
@@ -208,7 +208,7 @@ Export-ModuleMember -Function Wait-KaDeployment
 function Stop-KaDeployment {
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][Alias("uid")][int[]]$DeploymentId,
+        [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$DeploymentId,
         [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
         [Parameter()][pscredential]$Credential,
         [Parameter()][switch]$PassThru

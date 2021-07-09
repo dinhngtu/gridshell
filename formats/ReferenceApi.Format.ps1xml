@@ -2,9 +2,9 @@
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/PowerShell/PowerShell/master/src/Schemas/Format.xsd">
     <ViewDefinitions>
         <View>
-            <Name>Oar.Site</Name>
+            <Name>G5K.Oar.Site</Name>
             <ViewSelectedBy>
-                <TypeName>Oar.Site</TypeName>
+                <TypeName>G5K.Oar.Site</TypeName>
             </ViewSelectedBy>
             <TableControl>
                 <TableRowEntries>
@@ -19,9 +19,9 @@
             </TableControl>
         </View>
         <View>
-            <Name>Oar.Cluster</Name>
+            <Name>G5K.Oar.Cluster</Name>
             <ViewSelectedBy>
-                <TypeName>Oar.Cluster</TypeName>
+                <TypeName>G5K.Oar.Cluster</TypeName>
             </ViewSelectedBy>
             <TableControl>
                 <TableRowEntries>
@@ -48,9 +48,9 @@
             </TableControl>
         </View>
         <View>
-            <Name>Oar.Node</Name>
+            <Name>G5K.Oar.Node</Name>
             <ViewSelectedBy>
-                <TypeName>Oar.Node</TypeName>
+                <TypeName>G5K.Oar.Node</TypeName>
             </ViewSelectedBy>
             <TableControl>
                 <TableRowEntries>
@@ -70,53 +70,6 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>network_adapters</PropertyName>
-                            </TableColumnItem>
-                        </TableColumnItems>
-                    </TableRowEntry>
-                </TableRowEntries>
-            </TableControl>
-        </View>
-        <View>
-            <Name>Oar.Job</Name>
-            <ViewSelectedBy>
-                <TypeName>Oar.Job</TypeName>
-            </ViewSelectedBy>
-            <TableControl>
-                <TableRowEntries>
-                    <TableRowEntry>
-                        <TableColumnItems>
-                            <TableColumnItem>
-                                <PropertyName>Site</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>JobId</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>user</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>queue</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>state</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>Duration</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>SubmittedAt</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>ScheduledAt</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>StartedAt</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>StoppedAt</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>project</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>

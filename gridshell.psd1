@@ -63,7 +63,12 @@ Copyright = '(c) dinhngoc.tu@irit.fr. All rights reserved.'
 # TypesToProcess = @()
 
 # Format files (.ps1xml) to be loaded when importing this module
-FormatsToProcess = @("gridshell.Format.ps1xml")
+FormatsToProcess = @(
+    "formats/ReferenceApi.Format.ps1xml",
+    "formats/Job.Format.ps1xml",
+    "formats/Deployment.Format.ps1xml",
+    "formats/User.Format.ps1xml"
+)
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 # NestedModules = @()
