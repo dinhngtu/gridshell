@@ -3,13 +3,13 @@ function Get-OarJob {
     param(
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        [Parameter()][switch]$Resources,
         [Parameter(ParameterSetName = "Query")][ValidateRange(0, 10000)][int]$Offset = 0,
         [Parameter(ParameterSetName = "Query")][ValidateRange(1, 500)][int]$Limit = 50,
         [Parameter(ParameterSetName = "Query")][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated", "*")][string[]]$State = @("waiting", "launching", "running", "hold"),
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$Project,
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$User = $(Get-G5KCurrentUser),
         [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin", "besteffort")][string]$Queue,
-        [Parameter(ParameterSetName = "Query")][switch]$Resources,
         [Parameter()][pscredential]$Credential
     )
     begin {
@@ -27,12 +27,13 @@ function Get-OarJob {
                 $State = @()
             }
             $params = Remove-EmptyValues @{
-                offset  = $Offset;
-                limit   = $Limit;
-                state   = $State -join ",";
-                project = $Project;
-                user    = $User;
-                queue   = $Queue;
+                offset    = $Offset;
+                limit     = $Limit;
+                state     = $State -join ",";
+                project   = $Project;
+                user      = $User;
+                queue     = $Queue;
+                resources = $Resources ? "yes" : "no";
             }
         }
         elseif ($PSCmdlet.ParameterSetName -eq "Id") {
@@ -73,10 +74,10 @@ function New-OarJob {
         [Parameter()][string]$ErrorOutput,
         [Parameter()][string]$Properties,
         [Parameter()][System.Nullable[datetime]]$Reservation,
-        [Parameter()][ValidateSet("day", "night", "besteffort", "cosystem", "container", "inner", "noop", "allow_classic_ssh", "deploy")][string[]]$Type = @(),
+        [Parameter()][ValidateSet("day", "night", "besteffort", "cosystem", "container", "inner", "noop", "allow_classic_ssh", "deploy", "destructive", "exotic")][string[]]$Type = @(),
         [Parameter()][string]$Project,
         [Parameter()][string]$Name,
-        [Parameter()][ValidateSet("default", "production", "admin", "besteffort")][string]$Queue = "default",
+        [Parameter()][ValidateSet("default", "production", "admin", "besteffort", "testing")][string]$Queue = "default",
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
