@@ -22,7 +22,7 @@ function Get-KaEnvironment {
             name         = $Name;
             architecture = $Architecture;
             user         = $User;
-            latest_only  = $AllVersions ? "no" : "yes";
+            latest_only  = if ($AllVersions) { "no" } else { "yes" };
         }
         return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params).items
     }

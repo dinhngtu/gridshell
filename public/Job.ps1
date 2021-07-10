@@ -35,7 +35,7 @@ function Get-OarJob {
                 project   = $Project;
                 user      = $User;
                 queue     = $Queue;
-                resources = $Resources ? "yes" : "no";
+                resources = if ($Resources) { "yes" } else { "no" };
             }
         }
         elseif ($PSCmdlet.ParameterSetName -eq "Id") {
@@ -92,7 +92,7 @@ function New-OarJob {
         stdout      = $Output;
         stderr      = $ErrorOutput;
         properties  = $Properties;
-        reservation = $Reservation ? ([System.DateTimeOffset]$Reservation).ToUnixTimeSeconds() : $null;
+        reservation = if ($Reservation) { ([System.DateTimeOffset]$Reservation).ToUnixTimeSeconds() } else { $null };
         types       = $Type;
         project     = $Project;
         name        = $Name;

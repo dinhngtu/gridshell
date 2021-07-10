@@ -17,11 +17,11 @@ function Get-KwollectMetrics {
         $Site = Get-G5KCurrentSite
     }
     $params = Remove-EmptyValues @{
-        nodes      = $Nodes.Count -gt 0 ? ($Nodes -join ",") : "";
-        start_time = $StartTime ? $StartTime.ToString("s") : "";
-        end_time   = $EndTime ? $EndTime.ToString("s") : "";
-        job_id     = $PSBoundParameters.ContainsKey("JobId") ? $JobId : "";
-        metrics    = $Metrics.Count -gt 0 ? ($Metrics -join ",") : "";
+        nodes      = if ($Nodes.Count -gt 0) { $Nodes -join "," } else { "" };
+        start_time = if ($StartTime) { $StartTime.ToString("s") } else { "" };
+        end_time   = if ($EndTime) { $EndTime.ToString("s") } else { "" };
+        job_id     = if ($PSBoundParameters.ContainsKey("JobId")) { $JobId } else { "" };
+        metrics    = if ($Metrics.Count -gt 0) { $Metrics -join "," } else { "" };
         summary    = !!$Summary;
     }
     return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/metrics" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params -OutFile $OutFile

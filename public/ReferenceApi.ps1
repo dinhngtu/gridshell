@@ -22,7 +22,7 @@ function Get-OarSite {
     )
     $params = Remove-EmptyValues @{
         branch    = $Branch;
-        date      = $Date ? $Date.ToString("s") : $null;
+        date      = if ($Date) { $Date.ToString("s") } else { $null };
         timestamp = $UnixTimestamp;
         version   = $Version;
     }
@@ -63,7 +63,7 @@ function Get-OarCluster {
     }
     $params = Remove-EmptyValues @{
         branch    = $Branch;
-        date      = $Date ? $Date.ToString("s") : $null;
+        date      = if ($Date) { $Date.ToString("s") } else { $null };
         timestamp = $UnixTimestamp;
         version   = $Version;
     }
@@ -94,7 +94,7 @@ function Get-OarNode {
     }
     $params = Remove-EmptyValues @{
         branch    = $Branch;
-        date      = $Date ? $Date.ToString("s") : $null;
+        date      = if ($Date) { $Date.ToString("s") } else { $null };
         timestamp = $UnixTimestamp;
         version   = $Version;
     }
@@ -124,7 +124,7 @@ function Get-OarPdu {
     }
     $params = Remove-EmptyValues @{
         branch    = $Branch;
-        date      = $Date ? $Date.ToString("s") : $null;
+        date      = if ($Date) { $Date.ToString("s") } else { $null };
         timestamp = $UnixTimestamp;
         version   = $Version;
     }
@@ -154,7 +154,7 @@ function Get-OarNetworkEquipment {
     }
     $params = Remove-EmptyValues @{
         branch    = $Branch;
-        date      = $Date ? $Date.ToString("s") : $null;
+        date      = if ($Date) { $Date.ToString("s") } else { $null };
         timestamp = $UnixTimestamp;
         version   = $Version;
     }

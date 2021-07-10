@@ -14,10 +14,10 @@ function Get-OarSiteStatus {
         $Site = Get-G5KCurrentSite
     }
     $params = Remove-EmptyValues @{
-        disks   = $Disks ? "yes" : "no";
-        nodes   = $Nodes ? "yes" : "no";
-        vlans   = $Vlans ? "yes" : "no";
-        subnets = $Subnets ? "yes" : "no";
+        disks   = if ($Disks) { "yes" } else { "no" };
+        nodes   = if ($Nodes) { "yes" } else { "no" };
+        vlans   = if ($Vlans) { "yes" } else { "no" };
+        subnets = if ($Subnets) { "yes" } else { "no" };
     }
     return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/status" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params
 }
@@ -36,8 +36,8 @@ function Get-OarClusterStatus {
         $Site = Get-G5KCurrentSite
     }
     $params = Remove-EmptyValues @{
-        disks = $Disks ? "yes" : "no";
-        nodes = $Nodes ? "yes" : "no";
+        disks = if ($Disks) { "yes" } else { "no" };
+        nodes = if ($Nodes) { "yes" } else { "no" };
     }
     return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}/status" -f $script:g5kApiRoot, $Site, $Cluster) -Credential $Credential -Body $params
 }
