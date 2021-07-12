@@ -1,22 +1,41 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 function Get-OarJob {
+    <#
+    .SYNOPSIS
+        Fetch the list of all jobs for site, or a specific job. Jobs ordering is by descending date of submission.
+    #>
     [CmdletBinding(DefaultParameterSetName = "Query")]
     param(
+        # ID of job(s) to fetch.
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
+        # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        # Get more details (assigned_nodes and resources_by_types) for each job in the list.
         [Parameter()][switch]$Resources,
+        # Paginate through the collection with multiple requests.
         [Parameter(ParameterSetName = "Query")][ValidateRange(0, 999999999)][int]$Offset = 0,
+        # Limit the number of items to return.
         [Parameter(ParameterSetName = "Query")][ValidateRange(1, 500)][int]$Limit = 50,
+        # Filter jobs by state (waiting, launching, running, hold, error, terminated). Use '*' to specify all states.
         [Parameter(ParameterSetName = "Query")][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated", "*")][string[]]$State = @("waiting", "launching", "running", "hold"),
+        # Filter jobs in a specific project.
         [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$Project,
-        [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$User = $(Get-G5KCurrentUser),
+        # Filter jobs with a specific name.
+        [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$Name,
+        # Filter jobs with a specific owner. Use '*' to specify all users.
+        [Parameter(ParameterSetName = "Query")][ValidatePattern("\w*")][string]$User = "~",
+        # Filter jobs by queue. Use '*' to specify all queues.
         [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin", "besteffort", "testing")][string]$Queue,
+        # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
     begin {
         if (!$PSBoundParameters.Site -and !$Site.Count) {
             $Site = @(Get-G5KCurrentSite)
+        }
+        if ($User -eq "~") {
+            $User = Get-G5KCurrentUser -Credential $Credential -ErrorAction Stop
         }
         if ($PSCmdlet.ParameterSetName -eq "Query") {
             if ($Site.Count -gt 1) {
@@ -66,20 +85,37 @@ function Get-OarJob {
 Export-ModuleMember -Function Get-OarJob
 
 function New-OarJob {
+    <#
+    .SYNOPSIS
+        Submit a new job.
+    #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
+        # The command to execute when the job starts.
         [Parameter(Mandatory, Position = 0)][ValidateNotNullOrEmpty()][string]$Command,
+        # Site's ID.
         [Parameter()][ValidatePattern("\w*")][string]$Site,
+        # A description of the resources you want to book for your job, in OAR format.
         [Parameter()][string]$Resources,
+        # The directory in which the command will be launched.
         [Parameter()][string]$Directory = $(Get-Location -PSProvider FileSystem),
+        # The path to the file that will contain the STDOUT output of your command.
         [Parameter()][string]$Output,
+        # The path to the file that will contain the STDERR output of your command.
         [Parameter()][string]$ErrorOutput,
+        # A string containing SQL constraints on the resources (see OAR documentation for more details).
         [Parameter()][string]$Properties,
+        # If you want your job to be scheduled at a specific date, as a UNIX timestamp, OR a string containing a date in a reasonable format.
         [Parameter()][System.Nullable[datetime]]$Reservation,
+        # An array of job types.
         [Parameter()][ValidateSet("day", "night", "besteffort", "cosystem", "container", "inner", "noop", "allow_classic_ssh", "deploy", "destructive", "exotic")][string[]]$Type = @(),
+        # A project name to link your job to, set by default to the default one specified (if so) in UMS (known as GGA).
         [Parameter()][string]$Project,
+        # A job name.
         [Parameter()][string]$Name,
+        # A job queue.
         [Parameter()][ValidateSet("default", "production", "admin", "besteffort", "testing")][string]$Queue = "default",
+        # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
@@ -108,13 +144,23 @@ New-Alias -Name Start-OarJob -Value New-OarJob
 Export-ModuleMember -Alias Start-OarJob
 
 function Wait-OarJob {
+    <#
+    .SYNOPSIS
+        Wait until a set of OAR jobs reach a certain state.
+    #>
     [CmdletBinding()]
     param(
+        # ID of job(s) to wait for.
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][int[]]$JobId,
+        # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        # Status check interval.
         [Parameter()][int]$Interval = 60,
+        # Desired state of specified jobs.
         [Parameter()][ValidateSet("waiting", "launching", "running", "hold", "error", "terminated")][string[]]$Until = @("error", "terminated"),
+        # Do not estimate job runtime.
         [Parameter()][switch]$NoEstimate,
+        # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
     begin {
@@ -217,11 +263,19 @@ function Wait-OarJob {
 Export-ModuleMember -Function Wait-OarJob
 
 function Remove-OarJob {
+    <#
+    .SYNOPSIS
+        Ask for deletion of job.
+    #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
+        # ID of job(s) to delete.
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
+        # Site's ID.
         [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential,
+        # Return an object representing the item with which you are working.
         [Parameter()][switch]$PassThru
     )
     begin {

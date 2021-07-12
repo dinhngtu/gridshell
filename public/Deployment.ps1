@@ -1,15 +1,27 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 function Get-KaEnvironment {
+    <#
+    .SYNOPSIS
+        Fetch the list of all the public and authenticated user's environments for site, or a specific environment.
+    #>
     [CmdletBinding(DefaultParameterSetName = "List")]
     param(
+        # Site's ID.
         [Parameter()][ValidatePattern("\w*")]$Site,
-        [Parameter(Mandatory, ParameterSetName = "Get")][string]$Uid,
+        # ID of environment(s) to fetch.
+        [Parameter(Mandatory, ParameterSetName = "Get")][ValidateNotNullOrEmpty()][string]$Uid,
+        # Fetch description of all environments versions, instead of the latest only.
         [Parameter(ParameterSetName = "List")][switch]$AllVersions,
+        # Fetch environments owned by the specified user.
         [Parameter(ParameterSetName = "List")][string]$User,
+        # Fetch environments for a specific CPU architecture.
         [Parameter(ParameterSetName = "List")][string]$Architecture,
+        # Fetch environments with the specified name.
         [Parameter(ParameterSetName = "List", Position = 0)][string]$Name,
-        [Parameter()][string]$OutFile,
+        # Specifies the path to the environment output file.
+        [Parameter()][string]$Output,
+        # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
@@ -28,11 +40,11 @@ function Get-KaEnvironment {
         }
         $resp = (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params).items
     }
-    if ($OutFile) {
+    if ($Output) {
         if ($resp.Count -gt 1) {
             Write-Warning "Writing multiple environments, output file might not work directly for deployment"
         }
-        $resp | Select-Object -ExcludeProperty links | ConvertTo-Yaml > $OutFile
+        $resp | Select-Object -ExcludeProperty links | ConvertTo-Yaml > $Output
     }
     else {
         $resp | ConvertTo-KaEnvironment
@@ -41,19 +53,33 @@ function Get-KaEnvironment {
 Export-ModuleMember -Function Get-KaEnvironment
 
 function Get-KaDeployment {
+    <#
+    .SYNOPSIS
+        Fetch the list of all the deployments created for site, or a specific deployment.
+    #>
     [CmdletBinding(DefaultParameterSetName = "Query")]
     param(
+        # ID of deployment to fetch.
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][string[]]$DeploymentId,
+        # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        # Paginate through the collection with multiple requests.
         [Parameter()][ValidateRange(0, 999999999)][int]$Offset = 0,
+        # Limit the number of items to return.
         [Parameter()][ValidateRange(1, 500)][int]$Limit = 50,
+        # Filter the deployment collection with a specific deployment state. Use '*' to specify all states.
         [Parameter()][Alias("State")][ValidateSet("waiting", "processing", "canceled", "terminated", "error", "*")][string[]]$Status = @("waiting", "processing"),
-        [Parameter()][ValidatePattern("\w*")][string]$User = $(Get-G5KCurrentUser),
+        # Filter the deployment collection with a specific deployment owner. Use '*' to specify all users.
+        [Parameter()][ValidatePattern("\w*")][string]$User = "~",
+        # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
     begin {
         if (!$PSBoundParameters.Site -and !$Site.Count) {
             $Site = @(Get-G5KCurrentSite)
+        }
+        if ($User -eq "~") {
+            $User = Get-G5KCurrentUser -Credential $Credential -ErrorAction Stop
         }
         if ($PSCmdlet.ParameterSetName -eq "Query") {
             if ($Site.Count -gt 1) {
@@ -100,23 +126,46 @@ function Get-KaDeployment {
 Export-ModuleMember -Function Get-KaDeployment
 
 function Start-KaDeployment {
+    <#
+    .SYNOPSIS
+        Submit a new deployment (requires a job deploy reservation).
+    #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
+        # Site's ID.
         [Parameter()][ValidatePattern("\w*")]$Site,
+        # An array of nodes FQDN on which you want to deploy the new environment image.
         [Parameter(Mandatory)][string[]]$Nodes,
-        [Parameter(Mandatory, ParameterSetName = "EnvironmentName")][string]$EnvironmentName,
+        # The environment to use, which can be one of the following:
+        # - The name of an environment that belongs to you or whose visibility is public (e.g. debian10-x64-base);
+        # - The name of an environment that is owned by another user but with visibility set to shared (e.g. env-name@user-uid);
+        # - The HTTP or HTTPS URL to a file describing your environment (this has the advantage that you do not need to register it in the kadeploy database).
+        [Parameter(Mandatory, ParameterSetName = "EnvironmentName")][ValidateNotNullOrEmpty()][string]$EnvironmentName,
+        # Version of the environment to use.
         [Parameter(ParameterSetName = "EnvironmentName")][int]$EnvironmentVersion,
-        [Parameter(Mandatory, ParameterSetName = "EnvironmentObject")]$Environment,
+        # Specify an environment to use.
+        [Parameter(Mandatory, ParameterSetName = "EnvironmentObject")][ValidateNotNull()]$Environment,
+        # The content of your SSH public key or authorized_key file OR the HTTP URL to your SSH public key. That key will be dropped in the authorized_keys file of the nodes after deployment, so that you can SSH into them as root.
         [Parameter()][string]$AuthorizedKeys = $((Get-G5KUser).key),
+        # The block device to deploy on.
         [Parameter()][string]$BlockDevice,
+        # The partition number to deploy on.
         [Parameter()][System.Nullable[int]]$PartitionNumber,
+        # Configure the nodes' vlan.
         [Parameter()][System.Nullable[int]]$Vlan,
+        # Reformat the /tmp partition with the given filesystem type.
         [Parameter()][string]$TmpFilesystemType,
+        # Disable the disk partioning.
         [Parameter()][switch]$DisableDiskPartitioning,
+        # Disable the automatic installation of a bootloader for a Linux based environment.
         [Parameter()][switch]$DisableBootloaderInstall,
+        # Don't complain when deploying on nodes tagged as 'currently deploying'.
         [Parameter()][switch]$IgnoreNodesDeploying,
+        # Overwrite the default timeout for classical reboots.
         [Parameter()][System.Nullable[int]]$RebootClassicalTimeout,
+        # Overwrite the default timeout for kexec reboots.
         [Parameter()][System.Nullable[int]]$RebootKexecTimeout,
+        # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
@@ -151,12 +200,21 @@ New-Alias -Name New-KaDeployment -Value Start-KaDeployment
 Export-ModuleMember -Alias New-KaDeployment
 
 function Wait-KaDeployment {
+    <#
+    .SYNOPSIS
+        Wait until a set of deployments reach a certain state.
+    #>
     [CmdletBinding()]
     param(
+        # ID of deployment(s) to wait for.
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][string[]]$DeploymentId,
+        # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        # Status check interval.
         [Parameter()][int]$Interval = 60,
+        # Desired state of specified deployments.
         [Parameter()][ValidateSet("waiting", "processing", "canceled", "terminated", "error")][string[]]$Until = @("canceled", "terminated", "error"),
+        # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
     begin {
@@ -219,11 +277,19 @@ function Wait-KaDeployment {
 Export-ModuleMember -Function Wait-KaDeployment
 
 function Stop-KaDeployment {
+    <#
+    .SYNOPSIS
+        Cancel a deployment.
+    #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
+        # ID of deployment(s) to cancel.
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$DeploymentId,
+        # Site's ID.
         [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential,
+        # Return an object representing the item with which you are working.
         [Parameter()][switch]$PassThru
     )
     begin {

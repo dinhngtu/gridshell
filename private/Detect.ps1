@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 function Get-G5KCurrentSite {
+    [CmdletBinding()]
     param()
     $fqdn = [System.Net.Dns]::GetHostByName($null).HostName
     $fqdnParts = $fqdn.Split('.')
@@ -12,12 +13,8 @@ function Get-G5KCurrentSite {
 }
 
 function Get-G5KCurrentUser {
-    param()
-    $user = Get-G5KUser
-    if ($null -ne ($user)) {
-        return $user.uid
-    }
-    else {
-        return $null
-    }
+    [CmdletBinding()]
+    param([Parameter()][pscredential]$Credential)
+    $user = Get-G5KUser -Credential $Credential
+    return $user.uid
 }

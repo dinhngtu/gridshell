@@ -1,16 +1,28 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 function Get-KwollectMetrics {
+    # Fetch list of metrics values.
     [CmdletBinding()]
     param(
+        # Site's ID.
         [Parameter()][ValidatePattern("\w*")]$Site,
-        [Parameter()][string[]]$Nodes,
+        # List of nodes on which to obtain values.
+        [Parameter(ParameterSetName = "WithJobId")]
+        [Parameter(Mandatory, ParameterSetName = "WithoutJobId")]
+        [string[]]$Nodes,
+        # The time from which to obtain the values. By default it is 5 mintues before the current time.
         [Parameter()][System.Nullable[datetime]]$StartTime,
+        # The time until which to obtain the values. By default it is the current time.
         [Parameter()][System.Nullable[datetime]]$EndTime,
-        [Parameter()][int]$JobId,
+        # OAR job ID. This parameter is an alternative to the union of parameters Nodes, StartTime and EndTime, as it will use nodes list, start and end time according to job characteristics.
+        [Parameter(Mandatory, ParameterSetName = "WithJobId")][int]$JobId,
+        # The list of metrics name on which to obtain values (metrics name are described in Reference API). By default all metrics are returned.
         [Parameter()][string[]]$Metrics,
+        # Return a summary where metrics values are averaged over 5 minutes.
         [Parameter()][switch]$Summary,
-        [Parameter()][string]$OutFile,
+        # Specifies the path to the metric output file.
+        [Parameter()][string]$Output,
+        # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {

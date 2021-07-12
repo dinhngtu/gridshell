@@ -2,7 +2,7 @@
 
 function Remove-EmptyValues {
     param(
-        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][System.Collections.IDictionary]$InputObject
+        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][ValidateNotNull()][System.Collections.IDictionary]$InputObject
     )
     $ret = @{}
     foreach ($kv in $InputObject.GetEnumerator()) {
