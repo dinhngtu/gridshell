@@ -142,7 +142,7 @@ function Start-KaDeployment {
         # - The HTTP or HTTPS URL to a file describing your environment (this has the advantage that you do not need to register it in the kadeploy database).
         [Parameter(Mandatory, ParameterSetName = "EnvironmentName")][ValidateNotNullOrEmpty()][string]$EnvironmentName,
         # Version of the environment to use.
-        [Parameter(ParameterSetName = "EnvironmentName")][int]$EnvironmentVersion,
+        [Parameter(ParameterSetName = "EnvironmentName")][System.Nullable[int]]$EnvironmentVersion,
         # Specify an environment to use.
         [Parameter(Mandatory, ParameterSetName = "EnvironmentObject")][ValidateNotNull()]$Environment,
         # The content of your SSH public key or authorized_key file OR the HTTP URL to your SSH public key. That key will be dropped in the authorized_keys file of the nodes after deployment, so that you can SSH into them as root.

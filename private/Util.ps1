@@ -6,7 +6,7 @@ function Remove-EmptyValues {
     )
     $ret = @{}
     foreach ($kv in $InputObject.GetEnumerator()) {
-        if (![string]::IsNullOrEmpty($kv.Value -as [string])) {
+        if ($null -ne $kv.Value -and ![string]::IsNullOrEmpty($kv.Value -as [string])) {
             $ret.Add($kv.Key, $kv.Value)
         }
     }
