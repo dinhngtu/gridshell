@@ -9,13 +9,15 @@ function Get-KaEnvironment {
         [Parameter(ParameterSetName = "List")][string]$User,
         [Parameter(ParameterSetName = "List")][string]$Architecture,
         [Parameter(ParameterSetName = "List", Position = 0)][string]$Name,
+        [Parameter()][string]$OutFile,
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
         $Site = Get-G5KCurrentSite
     }
+    $resp = $null
     if ($PSCmdlet.ParameterSetName -eq "Get") {
-        return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments/{2}" -f $script:g5kApiRoot, $Site, $Uid) -Credential $Credential
+        $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments/{2}" -f $script:g5kApiRoot, $Site, $Uid) -Credential $Credential
     }
     elseif ($PSCmdlet.ParameterSetName -eq "List") {
         $params = Remove-EmptyValues @{
@@ -24,7 +26,16 @@ function Get-KaEnvironment {
             user         = $User;
             latest_only  = if ($AllVersions) { "no" } else { "yes" };
         }
-        return (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params).items
+        $resp = (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params).items
+    }
+    if ($OutFile) {
+        if ($resp.Count -gt 1) {
+            Write-Warning "Writing multiple environments, output file might not work directly for deployment"
+        }
+        $resp | ConvertTo-Yaml > $OutFile
+    }
+    else {
+        $resp
     }
 }
 Export-ModuleMember -Function Get-KaEnvironment

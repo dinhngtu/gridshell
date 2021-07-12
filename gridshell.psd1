@@ -51,7 +51,7 @@ Copyright = '(c) dinhngoc.tu@irit.fr. All rights reserved.'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+RequiredModules = @("powershell-yaml")
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -74,7 +74,37 @@ FormatsToProcess = @(
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = "*"
+FunctionsToExport = @(
+    "New-KaDeployment",
+    "Remove-KaDeployment",
+    "Start-OarJob",
+    "Stop-OarJob",
+    "Get-G5KApiRoot",
+    "Get-G5KGroup",
+    "Get-G5KGroupMembers",
+    "Get-G5KUser",
+    "Get-G5KUserGroups",
+    "Get-KaDeployment",
+    "Get-KaEnvironment",
+    "Get-KwollectMetrics",
+    "Get-OarCluster",
+    "Get-OarClusterStatus",
+    "Get-OarJob",
+    "Get-OarNetworkEquipment",
+    "Get-OarNode",
+    "Get-OarPdu",
+    "Get-OarSite",
+    "Get-OarSiteStatus",
+    "Get-OarSiteVersion",
+    "Get-OarVersion",
+    "New-OarJob",
+    "Remove-OarJob",
+    "Set-G5KApiRoot",
+    "Start-KaDeployment",
+    "Stop-KaDeployment",
+    "Wait-KaDeployment",
+    "Wait-OarJob"
+)
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
