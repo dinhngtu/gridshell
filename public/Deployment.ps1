@@ -35,7 +35,7 @@ function Get-KaEnvironment {
         $resp | ConvertTo-Yaml > $OutFile
     }
     else {
-        $resp
+        $resp | ConvertTo-KaEnvironment
     }
 }
 Export-ModuleMember -Function Get-KaEnvironment

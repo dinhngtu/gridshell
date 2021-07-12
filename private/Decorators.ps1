@@ -45,12 +45,18 @@ function ConvertTo-OarJobObject {
 
 function ConvertTo-KaDeployment {
     process {
-        $_ | Add-ObjectDetail -TypeName "G5K.Ka.Deployment" -PropertyToAdd @{
+        $_ | Add-ObjectDetail -TypeName "G5K.Kameleon.Deployment" -PropertyToAdd @{
             DeploymentId = $_.uid;
             CreatedAt    = [System.DateTimeOffset]::FromUnixTimeSeconds($_.created_at).DateTime.ToLocalTime();
             UpdatedAt    = [System.DateTimeOffset]::FromUnixTimeSeconds($_.updated_at).DateTime.ToLocalTime();
             Site         = $_.links | Where-Object rel -eq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf;
         }
+    }
+}
+
+function ConvertTo-KaEnvironment {
+    process {
+        $_ | Add-ObjectDetail -TypeName "G5K.Kameleon.Environment"
     }
 }
 

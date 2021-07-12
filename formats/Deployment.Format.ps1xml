@@ -2,9 +2,9 @@
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/PowerShell/PowerShell/master/src/Schemas/Format.xsd">
     <ViewDefinitions>
         <View>
-            <Name>G5K.Ka.Deployment</Name>
+            <Name>G5K.Kameleon.Deployment</Name>
             <ViewSelectedBy>
-                <TypeName>G5K.Ka.Deployment</TypeName>
+                <TypeName>G5K.Kameleon.Deployment</TypeName>
             </ViewSelectedBy>
             <TableControl>
                 <TableRowEntries>
@@ -30,6 +30,44 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>nodes</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>G5K.Kameleon.Environment</Name>
+            <ViewSelectedBy>
+                <TypeName>G5K.Kameleon.Environment</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>version</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>os</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>arch</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>user</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>author</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>visibility</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>description</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
