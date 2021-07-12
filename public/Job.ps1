@@ -71,7 +71,7 @@ function New-OarJob {
         [Parameter(Mandatory, Position = 0)][ValidateNotNullOrEmpty()][string]$Command,
         [Parameter()][ValidatePattern("\w*")][string]$Site,
         [Parameter()][string]$Resources,
-        [Parameter()][string]$Directory = $(Get-Location),
+        [Parameter()][string]$Directory = $(Get-Location -PSProvider FileSystem),
         [Parameter()][string]$Output,
         [Parameter()][string]$ErrorOutput,
         [Parameter()][string]$Properties,
