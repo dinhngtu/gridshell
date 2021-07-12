@@ -37,7 +37,7 @@ function Get-KaDeployment {
         [Parameter()][ValidateRange(0, 999999999)][int]$Offset = 0,
         [Parameter()][ValidateRange(1, 500)][int]$Limit = 50,
         [Parameter()][Alias("State")][ValidateSet("waiting", "processing", "canceled", "terminated", "error", "*")][string[]]$Status = @("waiting", "processing"),
-        [Parameter()][ValidatePattern("\w*")][string]$User = $((Get-G5KCurrentUser).uid),
+        [Parameter()][ValidatePattern("\w*")][string]$User = $(Get-G5KCurrentUser),
         [Parameter()][pscredential]$Credential
     )
     begin {
