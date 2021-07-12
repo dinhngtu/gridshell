@@ -32,7 +32,7 @@ function Get-KaEnvironment {
         if ($resp.Count -gt 1) {
             Write-Warning "Writing multiple environments, output file might not work directly for deployment"
         }
-        $resp | ConvertTo-Yaml > $OutFile
+        $resp | Select-Object -ExcludeProperty links | ConvertTo-Yaml > $OutFile
     }
     else {
         $resp | ConvertTo-KaEnvironment
