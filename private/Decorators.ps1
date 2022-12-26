@@ -66,7 +66,6 @@ function ConvertTo-G5KUser {
             CreatedAt        = [System.DateTimeOffset]::FromUnixTimeSeconds($_.created_at).DateTime.ToLocalTime();
             UpdatedAt        = [System.DateTimeOffset]::FromUnixTimeSeconds($_.updated_at).DateTime.ToLocalTime();
             ExpiresAt        = [System.DateTimeOffset]::FromUnixTimeSeconds($_.expires_at).DateTime.ToLocalTime();
-            EmailConfirmedAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.email_confirmed_at).DateTime.ToLocalTime();
         }
     }
 }
