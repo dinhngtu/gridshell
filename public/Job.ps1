@@ -311,3 +311,58 @@ function Remove-OarJob {
 Export-ModuleMember -Function Remove-OarJob
 New-Alias -Name Stop-OarJob -Value Remove-OarJob
 Export-ModuleMember -Alias Stop-OarJob
+
+function Get-OarJobWalltime {
+    <#
+    .SYNOPSIS
+        Fetch walltime change for a specific job.
+    #>
+    [CmdletBinding()]
+    param(
+        # ID of job to fetch.
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][int]$JobId,
+        # Site's ID.
+        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site
+    )
+    if (!$Site) {
+        $Site = Get-G5KCurrentSite
+    }
+    return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs/{2}/walltime" -f $script:g5kApiRoot, $Site, $JobId) -Credential $Credential
+}
+
+function Set-OarJobWalltime {
+    <#
+    .SYNOPSIS
+        Submit a job walltime change for a specific job.
+    #>
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        # ID of job to fetch.
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][int]$JobId,
+        # Site's ID.
+        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        # The new wanted walltime, format is <[+]new walltime>. If no signed is used, the value is absolute.
+        [Parameter(Mandatory)][string]$Walltime,
+        # Request walltime increase to be trialed or applied immediately regardless of any otherwise configured delay. Must be authorized in OAR configuration.
+        [Parameter()][switch]$Force,
+        # Request walltime increase to possibly delay next batch jobs. Must be authorized in OAR configuration.
+        [Parameter()][switch]$DelayNextJobs,
+        # Request walltime increase to be trialed or applied wholly at once, or not applied otherwise.
+        [Parameter()][switch]$Whole,
+        # Specify a timeout (in seconds) after which the walltime change request will be aborted if not already accepted by the scheduler. A default timeout could be set in OAR configuration.
+        [Parameter()][System.Nullable[int]]$Timeout
+    )
+    if (!$Site) {
+        $Site = Get-G5KCurrentSite
+    }
+    $params = Remove-EmptyValues @{
+        walltime        = $Walltime;
+        force           = !!$Force;
+        delay_next_jobs = !!$DelayNextJobs;
+        whole           = !!$Whole;
+        timeout         = $Timeout;
+    }
+    if ($PSCmdlet.ShouldProcess("job '{0}', site '{1}', walltime '{2}'" -f @($JobId, $Site, $Walltime), "Set-OarJobWalltime")) {
+        return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs/{2}/walltime" -f $script:g5kApiRoot, $Site, $JobId) -Credential $Credential -Body $params
+    }
+}
