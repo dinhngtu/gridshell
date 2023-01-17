@@ -33,10 +33,10 @@ function Get-KaEnvironment {
     }
     elseif ($PSCmdlet.ParameterSetName -eq "List") {
         $params = Remove-EmptyValues @{
-            name         = $Name;
-            architecture = $Architecture;
-            user         = $User;
-            latest_only  = if ($AllVersions) { "no" } else { "yes" };
+            name        = $Name;
+            arch        = $Architecture;
+            user        = $User;
+            latest_only = if ($AllVersions) { "no" } else { "yes" };
         }
         $resp = (Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/environments" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params).items
     }
