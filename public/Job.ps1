@@ -105,8 +105,10 @@ function New-OarJob {
         [Parameter()][string]$ErrorOutput,
         # A string containing SQL constraints on the resources (see OAR documentation for more details).
         [Parameter()][string]$Properties,
-        # If you want your job to be scheduled at a specific date, as a UNIX timestamp, OR a string containing a date in a reasonable format.
+        # Request that the job starts at a specified time.
         [Parameter()][System.Nullable[datetime]]$Reservation,
+        # Request that the job ends at a specified time.
+        [Parameter()][System.Nullable[datetime]]$Deadline,
         # An array of job types.
         [Parameter()][ValidateSet("day", "night", "besteffort", "cosystem", "container", "inner", "noop", "allow_classic_ssh", "deploy", "destructive", "exotic")][string[]]$Type = @(),
         # A project name to link your job to, set by default to the default one specified (if so) in UMS (known as GGA).
@@ -121,6 +123,16 @@ function New-OarJob {
     if (!$Site) {
         $Site = Get-G5KCurrentSite
     }
+    $resv_string = $null
+    if ($Reservation -and $Deadline) {
+        $resv_string = "{0},{1}" -f (Format-G5KDate $Reservation), (Format-G5KDate $Deadline)
+    }
+    elseif ($Reservation -and !$Deadline) {
+        $resv_string = Format-G5KDate $Reservation
+    }
+    elseif (!$Reservation -and $Deadline) {
+        $resv_string = "now,{0}" -f (Format-G5KDate $Deadline)
+    }
     $params = Remove-EmptyValues @{
         command     = $Command;
         resources   = $Resources;
@@ -128,7 +140,7 @@ function New-OarJob {
         stdout      = $Output;
         stderr      = $ErrorOutput;
         properties  = $Properties;
-        reservation = if ($Reservation) { ([System.DateTimeOffset]$Reservation).ToUnixTimeSeconds() } else { $null };
+        reservation = $resv_string;
         types       = $Type;
         project     = $Project;
         name        = $Name;

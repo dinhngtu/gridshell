@@ -12,3 +12,10 @@ function Remove-EmptyValues {
     }
     return $ret
 }
+
+function Format-G5KDate {
+    param (
+        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][datetime]$InputObject
+    )
+    return $InputObject.ToUniversalTime().ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", [System.Globalization.DateTimeFormatInfo]::InvariantInfo)
+}
