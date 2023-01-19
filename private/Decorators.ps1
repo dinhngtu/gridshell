@@ -32,10 +32,10 @@ function ConvertTo-OarJobObject {
     process {
         $_ | Add-ObjectDetail -TypeName "G5K.Oar.Job" -PropertyToAdd @{
             JobId       = $_.uid;
-            SubmittedAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.submitted_at).DateTime.ToLocalTime();
-            ScheduledAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.scheduled_at).DateTime.ToLocalTime();
-            StartedAt   = [System.DateTimeOffset]::FromUnixTimeSeconds($_.started_at).DateTime.ToLocalTime();
-            StoppedAt   = [System.DateTimeOffset]::FromUnixTimeSeconds($_.stopped_at).DateTime.ToLocalTime();
+            SubmittedAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.submitted_at).LocalDateTime;
+            ScheduledAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.scheduled_at).LocalDateTime;
+            StartedAt   = [System.DateTimeOffset]::FromUnixTimeSeconds($_.started_at).LocalDateTime;
+            StoppedAt   = [System.DateTimeOffset]::FromUnixTimeSeconds($_.stopped_at).LocalDateTime;
             Duration    = [timespan]::FromSeconds($_.walltime);
             Elapsed     = [timespan]::FromSeconds([Math]::Max(0, $(if ($_.stopped_at) { $_.stopped_at } else { [System.DateTimeOffset]::Now.ToUnixTimeSeconds() }) - $_.started_at));
             Site        = $_.links | Where-Object rel -eq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf;
@@ -47,8 +47,8 @@ function ConvertTo-KaDeployment {
     process {
         $_ | Add-ObjectDetail -TypeName "G5K.Kameleon.Deployment" -PropertyToAdd @{
             DeploymentId = $_.uid;
-            CreatedAt    = [System.DateTimeOffset]::FromUnixTimeSeconds($_.created_at).DateTime.ToLocalTime();
-            UpdatedAt    = [System.DateTimeOffset]::FromUnixTimeSeconds($_.updated_at).DateTime.ToLocalTime();
+            CreatedAt    = [System.DateTimeOffset]::FromUnixTimeSeconds($_.created_at).LocalDateTime;
+            UpdatedAt    = [System.DateTimeOffset]::FromUnixTimeSeconds($_.updated_at).LocalDateTime;
             Site         = $_.links | Where-Object rel -eq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf;
         }
     }
@@ -63,9 +63,9 @@ function ConvertTo-KaEnvironment {
 function ConvertTo-G5KUser {
     process {
         $_ | Add-ObjectDetail -TypeName "G5K.User" -PropertyToAdd @{
-            CreatedAt        = [System.DateTimeOffset]::FromUnixTimeSeconds($_.created_at).DateTime.ToLocalTime();
-            UpdatedAt        = [System.DateTimeOffset]::FromUnixTimeSeconds($_.updated_at).DateTime.ToLocalTime();
-            ExpiresAt        = [System.DateTimeOffset]::FromUnixTimeSeconds($_.expires_at).DateTime.ToLocalTime();
+            CreatedAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.created_at).LocalDateTime;
+            UpdatedAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.updated_at).LocalDateTime;
+            ExpiresAt = [System.DateTimeOffset]::FromUnixTimeSeconds($_.expires_at).LocalDateTime;
         }
     }
 }

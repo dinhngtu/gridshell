@@ -233,7 +233,7 @@ function Wait-OarJob {
                     -PercentComplete $pct
             }
             else {
-                $now = ([System.DateTimeOffset](Get-Date)).ToUnixTimeSeconds()
+                $now = [System.DateTimeOffset]::Now.ToUnixTimeSeconds()
                 $waits = $towait | ForEach-Object {
                     if ($_.state -In $Until) {
                         0
