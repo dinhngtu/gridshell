@@ -9,14 +9,18 @@ function Get-OarSiteStatus {
     param(
         # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
-        # Enable or disable status of disks in response.
-        [Parameter()][switch]$Disks,
-        # Enable or disable status of nodes in response.
-        [Parameter()][switch]$Nodes,
-        # Enable or disable status of vlans in response.
-        [Parameter()][switch]$Vlans,
-        # Enable or disable status of subnets in response.
-        [Parameter()][switch]$Subnets,
+        # Disable status of disks in response.
+        [Parameter()][switch]$NoDisks,
+        # Disable status of nodes in response.
+        [Parameter()][switch]$NoNodes,
+        # Disable status of vlans in response.
+        [Parameter()][switch]$NoVlans,
+        # Disable status of subnets in response.
+        [Parameter()][switch]$NoSubnets,
+        # Don't get upcoming jobs on resources in 'reservations' Array (in addition to current jobs).
+        [Parameter()][switch]$NoWaiting,
+        # Don't get jobs on resources. 'reservations' Array will not be present.
+        [Parameter()][switch]$NoJobDetails,
         # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
@@ -24,10 +28,12 @@ function Get-OarSiteStatus {
         $Site = Get-G5KCurrentSite
     }
     $params = Remove-EmptyValues @{
-        disks   = if ($Disks) { "yes" } else { "no" };
-        nodes   = if ($Nodes) { "yes" } else { "no" };
-        vlans   = if ($Vlans) { "yes" } else { "no" };
-        subnets = if ($Subnets) { "yes" } else { "no" };
+        disks       = if ($NoDisks) { "no" } else { "yes" };
+        nodes       = if ($NoNodes) { "no" } else { "yes" };
+        vlans       = if ($NoVlans) { "no" } else { "yes" };
+        subnets     = if ($NoSubnets) { "no" } else { "yes" };
+        waiting     = if ($NoWaiting) { "no" } else { "yes" };
+        job_details = if ($NoJobDetails) { "no" } else { "yes" };
     }
     return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/status" -f $script:g5kApiRoot, $Site) -Credential $Credential -Body $params
 }
@@ -40,10 +46,14 @@ function Get-OarClusterStatus {
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Cluster,
         # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
-        # Enable or disable status of disks in response.
-        [Parameter()][switch]$Disks,
-        # Enable or disable status of nodes in response.
-        [Parameter()][switch]$Nodes,
+        # Disable status of disks in response.
+        [Parameter()][switch]$NoDisks,
+        # Disable status of nodes in response.
+        [Parameter()][switch]$NoNodes,
+        # Don't get upcoming jobs on resources in 'reservations' Array (in addition to current jobs).
+        [Parameter()][switch]$NoWaiting,
+        # Don't get jobs on resources. 'reservations' Array will not be present.
+        [Parameter()][switch]$NoJobDetails,
         # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
@@ -51,8 +61,10 @@ function Get-OarClusterStatus {
         $Site = Get-G5KCurrentSite
     }
     $params = Remove-EmptyValues @{
-        disks = if ($Disks) { "yes" } else { "no" };
-        nodes = if ($Nodes) { "yes" } else { "no" };
+        disks       = if ($NoDisks) { "no" } else { "yes" };
+        nodes       = if ($NoNodes) { "no" } else { "yes" };
+        waiting     = if ($NoWaiting) { "no" } else { "yes" };
+        job_details = if ($NoJobDetails) { "no" } else { "yes" };
     }
     return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}/status" -f $script:g5kApiRoot, $Site, $Cluster) -Credential $Credential -Body $params
 }
