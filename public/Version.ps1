@@ -18,10 +18,13 @@ function Get-OarVersion {
         # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
-    $params = Remove-EmptyValues @{
-        branch = $Branch;
-        limit  = $Limit;
-        offset = $Offset;
+    $params = $null
+    if ($PSCmdlet.ParameterSetName -eq "List") {
+        $params = Remove-EmptyValues @{
+            branch = $Branch;
+            limit  = $Limit;
+            offset = $Offset;
+        }
     }
     $resp = Invoke-RestMethod -Uri ("{0}/3.0/versions/{1}" -f $script:g5kApiRoot, $VersionId) -Credential $Credential -Body $params
     if ($VersionId) {
@@ -56,10 +59,13 @@ function Get-OarSiteVersion {
     if (!$Site) {
         $Site = Get-G5KCurrentSite
     }
-    $params = Remove-EmptyValues @{
-        branch = $Branch;
-        limit  = $Limit;
-        offset = $Offset;
+    $params = $null
+    if ($PSCmdlet.ParameterSetName -eq "List") {
+        $params = Remove-EmptyValues @{
+            branch = $Branch;
+            limit  = $Limit;
+            offset = $Offset;
+        }
     }
     $resp = Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/versions/{2}" -f $script:g5kApiRoot, $Site, $VersionId) -Credential $Credential -Body $params
     if ($VersionId) {
