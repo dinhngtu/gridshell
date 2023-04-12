@@ -146,7 +146,7 @@ function Start-KaDeployment {
         # Specify an environment to use.
         [Parameter(Mandatory, ParameterSetName = "EnvironmentObject")][ValidateNotNull()]$Environment,
         # The content of your SSH public key or authorized_key file OR the HTTP URL to your SSH public key. That key will be dropped in the authorized_keys file of the nodes after deployment, so that you can SSH into them as root.
-        [Parameter()][string]$AuthorizedKeys = (Get-Content "$HOME/.ssh/authorized_keys"),
+        [Parameter()][string]$AuthorizedKeys = (Get-Content -Raw "$HOME/.ssh/authorized_keys"),
         # The block device to deploy on.
         [Parameter()][string]$BlockDevice,
         # The partition number to deploy on.
