@@ -68,7 +68,7 @@ function Get-KaDeployment {
         # Limit the number of items to return.
         [Parameter()][ValidateRange(1, 500)][int]$Limit = 50,
         # Filter the deployment collection with a specific deployment state. Use '*' to specify all states.
-        [Parameter()][Alias("State")][ValidateSet("waiting", "processing", "canceled", "terminated", "error", "*")][string[]]$Status = @("waiting", "processing"),
+        [Parameter()][Alias("State")][ValidateSet("waiting", "processing", "canceled", "terminated", "error", "*")][string]$Status = "processing",
         # Filter the deployment collection with a specific deployment owner. Use '*' to specify all users.
         [Parameter()][ValidatePattern("\w*")][string]$User = "~",
         # Specify a user account that has permission to perform this action. The default is the current user.
@@ -88,13 +88,13 @@ function Get-KaDeployment {
             if ($User -eq "*") {
                 $User = ''
             }
-            if ("*" -in $Status) {
+            if ($Status -eq "*") {
                 $Status = @()
             }
             $params = Remove-EmptyValues @{
                 offset = $Offset;
                 limit  = $Limit;
-                status = $Status -join ",";
+                status = $Status;
                 user   = $User;
             }
         }
@@ -146,7 +146,7 @@ function Start-KaDeployment {
         # Specify an environment to use.
         [Parameter(Mandatory, ParameterSetName = "EnvironmentObject")][ValidateNotNull()]$Environment,
         # The content of your SSH public key or authorized_key file OR the HTTP URL to your SSH public key. That key will be dropped in the authorized_keys file of the nodes after deployment, so that you can SSH into them as root.
-        [Parameter()][string]$AuthorizedKeys = $((Get-G5KUser).key),
+        [Parameter()][string]$AuthorizedKeys = (Get-Content "$HOME/.ssh/authorized_keys"),
         # The block device to deploy on.
         [Parameter()][string]$BlockDevice,
         # The partition number to deploy on.
