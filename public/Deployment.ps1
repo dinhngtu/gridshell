@@ -68,7 +68,7 @@ function Get-KaDeployment {
         # Limit the number of items to return.
         [Parameter()][ValidateRange(1, 500)][int]$Limit = 50,
         # Filter the deployment collection with a specific deployment state. Use '*' to specify all states.
-        [Parameter()][Alias("State")][ValidateSet("waiting", "processing", "canceled", "terminated", "error", "*")][string]$Status = "processing",
+        [Parameter()][Alias("State")][ValidateSet("waiting", "processing", "canceled", "terminated", "error", "*", "")][string]$Status = "processing",
         # Filter the deployment collection with a specific deployment owner. Use '*' to specify all users.
         [Parameter()][ValidatePattern("\w*")][string]$User = "~",
         # Specify a user account that has permission to perform this action. The default is the current user.
@@ -89,7 +89,7 @@ function Get-KaDeployment {
                 $User = ''
             }
             if ($Status -eq "*") {
-                $Status = @()
+                $Status = ''
             }
             $params = Remove-EmptyValues @{
                 offset = $Offset;
