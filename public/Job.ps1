@@ -109,6 +109,8 @@ function New-OarJob {
         [Parameter()][System.Nullable[datetime]]$Reservation,
         # Request that the job ends at a specified time.
         [Parameter()][System.Nullable[datetime]]$Deadline,
+        # Request that the job lasts a specified time.
+        [Parameter()][System.Nullable[timespan]]$Duration,
         # An array of job types.
         [Parameter()][ValidateSet("day", "night", "besteffort", "cosystem", "container", "inner", "noop", "allow_classic_ssh", "deploy", "destructive", "exotic")][string[]]$Type = @(),
         # A project name to link your job to, set by default to the default one specified (if so) in UMS (known as GGA).
@@ -127,11 +129,17 @@ function New-OarJob {
     if ($Reservation -and $Deadline) {
         $resv_string = "{0},{1}" -f (Format-G5KDate $Reservation), (Format-G5KDate $Deadline)
     }
+    elseif ($Reservation -and $Duration) {
+        $resv_string = "{0},{1}" -f (Format-G5KDate $Reservation), (Format-G5KDate ($Reservation + $Duration))
+    }
     elseif ($Reservation -and !$Deadline) {
         $resv_string = Format-G5KDate $Reservation
     }
     elseif (!$Reservation -and $Deadline) {
         $resv_string = "now,{0}" -f (Format-G5KDate $Deadline)
+    }
+    elseif (!$Reservation -and $Duration) {
+        $resv_string = "now,{0}" -f (Format-G5KDate ([datetime]::Now + $Duration))
     }
     $params = Remove-EmptyValues @{
         command     = $Command;
