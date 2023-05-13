@@ -19,3 +19,15 @@ function Format-G5KDate {
     )
     return $InputObject.ToUniversalTime().ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", [System.Globalization.DateTimeFormatInfo]::InvariantInfo)
 }
+
+function Split-PropertyKey {
+    param(
+        [Parameter(Mandatory, ValueFromPipeline, Position = 0)][ValidateNotNull()][pscustomobject]$InputObject,
+        [string]$KeyName = "Name"
+    )
+    foreach ($n in ($InputObject.PSObject.Properties | Where-Object MemberType -eq NoteProperty)) {
+        $p = $n.Value
+        $p.PSObject.Properties.Add((New-Object psnoteproperty($KeyName, $n.Name)))
+        $p
+    }
+}

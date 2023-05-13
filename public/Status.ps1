@@ -69,3 +69,29 @@ function Get-OarClusterStatus {
     return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/clusters/{2}/status" -f $script:g5kApiRoot, $Site, $Cluster) -Credential $Credential -Body $params
 }
 Export-ModuleMember -Function Get-OarClusterStatus
+
+function Get-OarNodeAvailability {
+    [CmdletBinding()]
+    param(
+        # Cluster's ID.
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Cluster,
+        # Site's ID.
+        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
+        # Disable status of disks in response.
+        [Parameter()][switch]$NoDisks,
+        # Disable status of nodes in response.
+        [Parameter()][switch]$NoNodes,
+        # Don't get upcoming jobs on resources in 'reservations' Array (in addition to current jobs).
+        [Parameter()][switch]$NoWaiting,
+        # Don't get jobs on resources. 'reservations' Array will not be present.
+        [Parameter()][switch]$NoJobDetails,
+        # Specify a user account that has permission to perform this action. The default is the current user.
+        [Parameter()][pscredential]$Credential
+    )
+    if (!$Site) {
+        $Site = Get-G5KCurrentSite
+    }
+    $resp = Get-OarClusterStatus -Cluster $Cluster -Site $Site -NoDisks:$NoDisks -NoNodes:$NoNodes -NoWaiting:$NoWaiting -NoJobDetails:$NoJobDetails -Credential $Credential
+    return $resp.nodes | ConvertTo-OarNodeAvailabilityObject | Sort-Object -Property Node
+}
+Export-ModuleMember -Function Get-OarNodeAvailability

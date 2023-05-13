@@ -92,6 +92,7 @@ FunctionsToExport = @(
     "Get-OarJob",
     "Get-OarNetworkEquipment",
     "Get-OarNode",
+    "Get-OarNodeAvailability",
     "Get-OarPdu",
     "Get-OarSite",
     "Get-OarSiteStatus",

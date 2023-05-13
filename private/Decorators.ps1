@@ -81,3 +81,14 @@ function ConvertTo-G5KGroupMembership {
         $_ | Add-ObjectDetail -TypeName "G5K.GroupMembership"
     }
 }
+
+function ConvertTo-OarNodeAvailabilityObject {
+    process {
+        Split-PropertyKey -InputObject $_ -KeyName Node | ForEach-Object {
+            $_ | Add-ObjectDetail -TypeName "G5K.Oar.NodeAvailability" -PropertyToAdd @{
+                Active = ($_.reservations | Where-Object state -ine "waiting" | Measure-Object).Count;
+                Waiting = ($_.reservations | Where-Object state -ieq "waiting" | Measure-Object).Count;
+            }
+        }
+    }
+}
