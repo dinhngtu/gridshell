@@ -64,9 +64,10 @@ RequiredModules = @("powershell-yaml")
 
 # Format files (.ps1xml) to be loaded when importing this module
 FormatsToProcess = @(
-    "formats/ReferenceApi.Format.ps1xml",
-    "formats/Job.Format.ps1xml",
     "formats/Deployment.Format.ps1xml",
+    "formats/Job.Format.ps1xml",
+    "formats/ReferenceApi.Format.ps1xml",
+    "formats/Status.Format.ps1xml",
     "formats/User.Format.ps1xml"
 )
 
@@ -75,10 +76,6 @@ FormatsToProcess = @(
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @(
-    "New-KaDeployment",
-    "Remove-KaDeployment",
-    "Start-OarJob",
-    "Stop-OarJob",
     "Get-G5KApiRoot",
     "Get-G5KGroup",
     "Get-G5KGroupMembers",
@@ -87,9 +84,11 @@ FunctionsToExport = @(
     "Get-KaDeployment",
     "Get-KaEnvironment",
     "Get-KwollectMetrics",
+    "Get-KwollectMetrics",
     "Get-OarCluster",
     "Get-OarClusterStatus",
     "Get-OarJob",
+    "Get-OarJobWalltime",
     "Get-OarNetworkEquipment",
     "Get-OarNode",
     "Get-OarNodeAvailability",
@@ -98,11 +97,16 @@ FunctionsToExport = @(
     "Get-OarSiteStatus",
     "Get-OarSiteVersion",
     "Get-OarVersion",
+    "New-KaDeployment",
     "New-OarJob",
+    "Remove-KaDeployment",
     "Remove-OarJob",
     "Set-G5KApiRoot",
+    "Set-OarJobWalltime",
     "Start-KaDeployment",
+    "Start-OarJob",
     "Stop-KaDeployment",
+    "Stop-OarJob",
     "Wait-KaDeployment",
     "Wait-OarJob"
 )

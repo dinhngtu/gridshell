@@ -349,6 +349,7 @@ function Get-OarJobWalltime {
     }
     return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs/{2}/walltime" -f $script:g5kApiRoot, $Site, $JobId) -Credential $Credential
 }
+Export-ModuleMember -Function Get-OarJobWalltime
 
 function Set-OarJobWalltime {
     <#
@@ -386,3 +387,4 @@ function Set-OarJobWalltime {
         return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs/{2}/walltime" -f $script:g5kApiRoot, $Site, $JobId) -Credential $Credential -Body $params
     }
 }
+Export-ModuleMember -Function Set-OarJobWalltime

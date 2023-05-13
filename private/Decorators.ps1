@@ -12,14 +12,14 @@ function ConvertTo-OarClusterObject {
     process {
         $_ | Add-ObjectDetail -TypeName "G5K.Oar.Cluster" -PropertyToAdd @{
             Cluster = $_.uid;
-            Site    = $_.links | Where-Object rel -eq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf;
+            Site    = $_.links | Where-Object rel -ieq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf;
         }
     }
 }
 
 function ConvertTo-OarNodeObject {
     process {
-        $parent = $_.links | Where-Object rel -eq "parent" | Select-Object -First 1 -ExpandProperty href
+        $parent = $_.links | Where-Object rel -ieq "parent" | Select-Object -First 1 -ExpandProperty href
         $_ | Add-ObjectDetail -TypeName "G5K.Oar.Node" -PropertyToAdd @{
             Node    = $_.uid;
             Cluster = $parent | Split-Path -Leaf;
@@ -38,7 +38,7 @@ function ConvertTo-OarJobObject {
             StoppedAt   = [System.DateTimeOffset]::FromUnixTimeSeconds($_.stopped_at).LocalDateTime;
             Duration    = [timespan]::FromSeconds($_.walltime);
             Elapsed     = [timespan]::FromSeconds([Math]::Max(0, $(if ($_.stopped_at) { $_.stopped_at } else { [System.DateTimeOffset]::Now.ToUnixTimeSeconds() }) - $_.started_at));
-            Site        = $_.links | Where-Object rel -eq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf;
+            Site        = $_.links | Where-Object rel -ieq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf;
         }
     }
 }
@@ -49,7 +49,7 @@ function ConvertTo-KaDeployment {
             DeploymentId = $_.uid;
             CreatedAt    = [System.DateTimeOffset]::FromUnixTimeSeconds($_.created_at).LocalDateTime;
             UpdatedAt    = [System.DateTimeOffset]::FromUnixTimeSeconds($_.updated_at).LocalDateTime;
-            Site         = $_.links | Where-Object rel -eq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf;
+            Site         = $_.links | Where-Object rel -ieq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf;
         }
     }
 }
