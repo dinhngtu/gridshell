@@ -1,7 +1,6 @@
 $completionCacheCluster = @{}
 
-function Get-G5KClusterCompletion {
-    [OutputType([System.Management.Automation.CompletionResult])]
+function Get-GridshellClusterCompletion {
     param(
         [string]$CommandName,
         [string]$ParameterName,
@@ -14,17 +13,14 @@ function Get-G5KClusterCompletion {
         $site = $FakeBoundParameters.Site
     }
     else {
-        $site = Get-G5KCurrentSite
+        $site = Get-GridshellCurrentSite
     }
     if (!$completionCacheCluster.ContainsKey($site)) {
         $completionCacheCluster[$site] = Get-OarCluster -Site $site | Select-Object -ExpandProperty Cluster
     }
 
-    $CompletionResults = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
     $completionCacheCluster[$site] | Where-Object {
         $_ -like "$WordToComplete*"
-    } | ForEach-Object {
-        $CompletionResults.Add($_)
     }
-    return $CompletionResults
 }
+Export-ModuleMember -Function Get-GridshellClusterCompletion

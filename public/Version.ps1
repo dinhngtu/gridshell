@@ -60,7 +60,7 @@ function Get-OarSiteVersion {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $params = $null
     if ($PSCmdlet.ParameterSetName -eq "List") {

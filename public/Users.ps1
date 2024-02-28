@@ -8,7 +8,7 @@ function Get-G5KUser {
     [CmdletBinding()]
     param(
         # User's name.
-        [Parameter(Position = 0)][ValidatePattern("\w*")]$UserName = "~",
+        [Parameter(Position = 0)][Alias("User")][ValidatePattern("\w*")]$UserName = "~",
         # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
@@ -46,7 +46,7 @@ function Get-G5KUserGroups {
     [CmdletBinding()]
     param(
         # User's name.
-        [Parameter(Position = 0)][ValidatePattern("\w*")]$UserName = "~",
+        [Parameter(Position = 0)][Alias("User")][ValidatePattern("\w*")]$UserName = "~",
         # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )

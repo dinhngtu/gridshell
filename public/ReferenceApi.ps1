@@ -41,7 +41,7 @@ function Get-OarSite {
         version   = $Version;
     }
     if ($PSCmdlet.ParameterSetName -like "Current*") {
-        $currentSite = Get-G5KCurrentSite
+        $currentSite = Get-GridshellCurrentSite
         if ($currentSite) {
             return (Get-OarSite $currentSite)
         }
@@ -71,7 +71,7 @@ function Get-OarCluster {
         # Cluster's ID.
         [Parameter(Position = 0)]
         [ValidatePattern("\w*")]
-        [ArgumentCompleter({ Get-G5KClusterCompletion @args })]
+        [ArgumentCompleter({ Get-GridshellClusterCompletion @args })]
         $Cluster,
         # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -90,7 +90,7 @@ function Get-OarCluster {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $params = Remove-EmptyValues @{
         branch    = $Branch;
@@ -120,7 +120,7 @@ function Get-OarNode {
         # Cluster's ID.
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidatePattern("\w*")]
-        [ArgumentCompleter({ Get-G5KClusterCompletion @args })]
+        [ArgumentCompleter({ Get-GridshellClusterCompletion @args })]
         $Cluster,
         # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -139,7 +139,7 @@ function Get-OarNode {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $params = Remove-EmptyValues @{
         branch    = $Branch;
@@ -183,7 +183,7 @@ function Get-OarPdu {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $params = Remove-EmptyValues @{
         branch    = $Branch;
@@ -227,7 +227,7 @@ function Get-OarNetworkEquipment {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $params = Remove-EmptyValues @{
         branch    = $Branch;

@@ -29,7 +29,7 @@ function Get-KwollectMetrics {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $params = Remove-EmptyValues @{
         nodes      = if ($Nodes.Count -gt 0) { $Nodes -join "," } else { "" };

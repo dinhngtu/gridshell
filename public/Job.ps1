@@ -36,10 +36,10 @@ function Get-OarJob {
     )
     begin {
         if (!$PSBoundParameters.Site -and !$Site.Count) {
-            $Site = @(Get-G5KCurrentSite)
+            $Site = @(Get-GridshellCurrentSite)
         }
         if ($User -eq "~") {
-            $User = Get-G5KCurrentUser -Credential $Credential -ErrorAction Stop
+            $User = (Get-G5KUser -Credential $Credential -ErrorAction Stop).uid
         }
         if ($PSCmdlet.ParameterSetName -eq "Query") {
             if ($Site.Count -gt 1) {
@@ -131,7 +131,7 @@ function New-OarJob {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $resv_string = $null
     if ($Reservation -and $Deadline) {
@@ -198,7 +198,7 @@ function Wait-OarJob {
     begin {
         $towait = [System.Collections.Generic.List[object]]::new()
         if (!$Site.Count) {
-            $Site = @(Get-G5KCurrentSite)
+            $Site = @(Get-GridshellCurrentSite)
         }
     }
     process {
@@ -319,7 +319,7 @@ function Remove-OarJob {
             throw [System.ArgumentException]::new("You can only specify one site per job ID")
         }
         elseif (!$Site.Count) {
-            $Site = @(Get-G5KCurrentSite)
+            $Site = @(Get-GridshellCurrentSite)
         }
     }
     process {
@@ -365,7 +365,7 @@ function Get-OarJobWalltime {
         $Site
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     return Invoke-RestMethod -Uri ("{0}/3.0/sites/{1}/jobs/{2}/walltime" -f $script:g5kApiRoot, $Site, $JobId) -Credential $Credential
 }
@@ -398,7 +398,7 @@ function Set-OarJobWalltime {
         [Parameter()][System.Nullable[int]]$Timeout
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $params = Remove-EmptyValues @{
         walltime        = $Walltime;

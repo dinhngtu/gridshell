@@ -28,7 +28,7 @@ function Get-OarSiteStatus {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $params = Remove-EmptyValues @{
         disks       = if ($NoDisks) { "no" } else { "yes" };
@@ -48,7 +48,7 @@ function Get-OarClusterStatus {
         # Cluster's ID.
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [ValidatePattern("\w*")]
-        [ArgumentCompleter({ Get-G5KClusterCompletion @args })]
+        [ArgumentCompleter({ Get-GridshellClusterCompletion @args })]
         $Cluster,
         # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -67,7 +67,7 @@ function Get-OarClusterStatus {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $params = Remove-EmptyValues @{
         disks       = if ($NoDisks) { "no" } else { "yes" };
@@ -85,7 +85,7 @@ function Get-OarNodeAvailability {
         # Cluster's ID.
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [ValidatePattern("\w*")]
-        [ArgumentCompleter({ Get-G5KClusterCompletion @args })]
+        [ArgumentCompleter({ Get-GridshellClusterCompletion @args })]
         $Cluster,
         # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -104,7 +104,7 @@ function Get-OarNodeAvailability {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $resp = Get-OarClusterStatus -Cluster $Cluster -Site $Site -NoDisks:$NoDisks -NoNodes:$NoNodes -NoWaiting:$NoWaiting -NoJobDetails:$NoJobDetails -Credential $Credential
     return $resp.nodes | ConvertTo-OarNodeAvailabilityObject | Sort-Object -Property Node

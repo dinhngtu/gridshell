@@ -1,20 +1,35 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-function Get-G5KCurrentSite {
+$script:currentSite = $null
+
+function Get-GridshellCurrentSite {
     [CmdletBinding()]
     param()
+    if ($null -ne $script:currentSite) {
+        return $script:currentSite
+    }
     $fqdn = [System.Net.Dns]::GetHostByName($null).HostName
     $fqdnParts = $fqdn.Split('.')
-    $currentSite = $null
     if ($fqdnParts.Count -ge 4 -and $fqdn.EndsWith('.grid5000.fr')) {
-        $currentSite = $fqdnParts[-3]
+        $script:currentSite = $fqdnParts[-3]
     }
-    return $currentSite
+    return $script:currentSite
 }
+Export-ModuleMember -Function Get-GridshellCurrentSite
 
-function Get-G5KCurrentUser {
-    [CmdletBinding()]
-    param([Parameter()][pscredential]$Credential)
-    $user = Get-G5KUser -Credential $Credential
-    return $user.uid
+function Set-GridshellCurrentSite {
+    [CmdletBinding(DefaultParameterSetName = "Value")]
+    param(
+        [Parameter(Mandatory, Position = 0, ParameterSetName = "Value")]
+        [ValidateNotNullOrEmpty()]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        [string]
+        $Site,
+        [Parameter(Mandatory, ParameterSetName = "Default")][switch]$Default
+    )
+    if ($Default) {
+        $Site = $null
+    }
+    $script:currentSite = $Site
 }
+Export-ModuleMember -Function Set-GridshellCurrentSite

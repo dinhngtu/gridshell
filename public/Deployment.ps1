@@ -28,7 +28,7 @@ function Get-KaEnvironment {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     $resp = $null
     if ($PSCmdlet.ParameterSetName -eq "Get") {
@@ -83,10 +83,10 @@ function Get-KaDeployment {
     )
     begin {
         if (!$PSBoundParameters.Site -and !$Site.Count) {
-            $Site = @(Get-G5KCurrentSite)
+            $Site = @(Get-GridshellCurrentSite)
         }
         if ($User -eq "~") {
-            $User = Get-G5KCurrentUser -Credential $Credential -ErrorAction Stop
+            $User = (Get-G5KUser -Credential $Credential -ErrorAction Stop).uid
         }
         if ($PSCmdlet.ParameterSetName -eq "Query") {
             if ($Site.Count -gt 1) {
@@ -179,7 +179,7 @@ function Start-KaDeployment {
         [Parameter()][pscredential]$Credential
     )
     if (!$Site) {
-        $Site = Get-G5KCurrentSite
+        $Site = Get-GridshellCurrentSite
     }
     if ($PSCmdlet.ParameterSetName -eq "EnvironmentObject") {
         $EnvironmentName = $Environment.name
@@ -234,7 +234,7 @@ function Wait-KaDeployment {
     begin {
         $towait = [System.Collections.Generic.List[object]]::new()
         if (!$Site.Count) {
-            $Site = @(Get-G5KCurrentSite)
+            $Site = @(Get-GridshellCurrentSite)
         }
     }
     process {
@@ -315,7 +315,7 @@ function Stop-KaDeployment {
             throw [System.ArgumentException]::new("You can only specify one site per job ID")
         }
         elseif (!$Site.Count) {
-            $Site = @(Get-G5KCurrentSite)
+            $Site = @(Get-GridshellCurrentSite)
         }
     }
     process {
