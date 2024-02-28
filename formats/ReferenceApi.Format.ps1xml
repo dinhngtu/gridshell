@@ -37,6 +37,9 @@
                                 <PropertyName>queues</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
+                                <PropertyName>exotic</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
                                 <PropertyName>model</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
