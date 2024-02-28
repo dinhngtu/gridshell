@@ -104,7 +104,10 @@ function New-OarJob {
         [string]
         $Site,
         # A description of the resources you want to book for your job, in OAR format.
-        [Parameter()][string]$Resources,
+        [Parameter()]
+        [Alias("l")]
+        [string]
+        $Resources,
         # The directory in which the command will be launched.
         [Parameter()][string]$Directory = $(Get-Location -PSProvider FileSystem),
         # The path to the file that will contain the STDOUT output of your command.
@@ -112,7 +115,11 @@ function New-OarJob {
         # The path to the file that will contain the STDERR output of your command.
         [Parameter()][string]$ErrorOutput,
         # A string containing SQL constraints on the resources (see OAR documentation for more details).
-        [Parameter()][string]$Properties,
+        [Parameter()]
+        [Alias("p")]
+        [ArgumentCompleter({ Get-GridshellClusterCompletion @args })]
+        [string]
+        $Properties,
         # Request that the job starts at a specified time.
         [Parameter()][System.Nullable[datetime]]$Reservation,
         # Request that the job ends at a specified time.
@@ -120,13 +127,20 @@ function New-OarJob {
         # Request that the job lasts a specified time.
         [Parameter()][System.Nullable[timespan]]$Duration,
         # An array of job types.
-        [Parameter()][ValidateSet("day", "night", "besteffort", "cosystem", "container", "inner", "noop", "allow_classic_ssh", "deploy", "destructive", "exotic")][string[]]$Type = @(),
+        [Parameter()]
+        [Alias("t")]
+        [ArgumentCompletions("besteffort", "timesharing", "idempotent", "cosystem", "deploy", "noop", "container", "inner=", "token:", "day", "night", "night=noretry", "allow_classic_ssh", "destructive", "exotic")]
+        [string[]]
+        $Type = @(),
         # A project name to link your job to, set by default to the default one specified (if so) in UMS (known as GGA).
         [Parameter()][string]$Project,
         # A job name.
         [Parameter()][string]$Name,
         # A job queue.
-        [Parameter()][ValidateSet("default", "production", "admin", "besteffort", "testing")][string]$Queue = "default",
+        [Parameter()]
+        [Alias("q")]
+        [ValidateSet("default", "production", "admin", "besteffort", "testing")]
+        [string]$Queue = "default",
         # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential = $script:currentCredential
     )
