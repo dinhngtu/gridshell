@@ -14,6 +14,9 @@ function Get-GridshellCurrentSite {
     if ($fqdnParts.Count -ge 4 -and $fqdn.EndsWith('.grid5000.fr')) {
         $script:currentSite = $fqdnParts[-3]
     }
+    if ($null -eq $script:currentSite) {
+        throw "Cannot detect current site, set it manually with Get-GridshellCurrentSite"
+    }
     return $script:currentSite
 }
 Export-ModuleMember -Function Get-GridshellCurrentSite
