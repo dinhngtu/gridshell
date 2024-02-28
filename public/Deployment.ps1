@@ -8,7 +8,10 @@ function Get-KaEnvironment {
     [CmdletBinding(DefaultParameterSetName = "List")]
     param(
         # Site's ID.
-        [Parameter()][ValidatePattern("\w*")]$Site,
+        [Parameter()]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # ID of environment(s) to fetch.
         [Parameter(Mandatory, ParameterSetName = "Get")][ValidateNotNullOrEmpty()][string]$Uid,
         # Fetch description of all environments versions, instead of the latest only.
@@ -62,7 +65,11 @@ function Get-KaDeployment {
         # ID of deployment to fetch.
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][string[]]$DeploymentId,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        [string[]]
+        $Site,
         # Paginate through the collection with multiple requests.
         [Parameter()][ValidateRange(0, 999999999)][int]$Offset = 0,
         # Limit the number of items to return.
@@ -133,7 +140,10 @@ function Start-KaDeployment {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # Site's ID.
-        [Parameter()][ValidatePattern("\w*")]$Site,
+        [Parameter()]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # An array of nodes FQDN on which you want to deploy the new environment image.
         [Parameter(Mandatory)][string[]]$Nodes,
         # The environment to use, which can be one of the following:
@@ -209,7 +219,11 @@ function Wait-KaDeployment {
         # ID of deployment(s) to wait for.
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][string[]]$DeploymentId,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        [string[]]
+        $Site,
         # Status check interval.
         [Parameter()][int]$Interval = 60,
         # Desired state of specified deployments.
@@ -286,7 +300,11 @@ function Stop-KaDeployment {
         # ID of deployment(s) to cancel.
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$DeploymentId,
         # Site's ID.
-        [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        [string[]]
+        $Site,
         # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential,
         # Return an object representing the item with which you are working.

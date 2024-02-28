@@ -46,7 +46,10 @@ function Get-OarSiteVersion {
         # ID of version to fetch, as a Git commit hash.
         [Parameter(Position = 0, ParameterSetName = "Get")][ValidatePattern("\w*")]$VersionId,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # Use a specific branch of reference-repository, for example the 'testing' branch contains the resources that are not yet in production.
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         # Limit the number of items to return.

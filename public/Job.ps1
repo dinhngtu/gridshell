@@ -10,7 +10,11 @@ function Get-OarJob {
         # ID of job(s) to fetch.
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        [string[]]
+        $Site,
         # Get more details (assigned_nodes and resources_by_types) for each job in the list.
         [Parameter()][switch]$Resources,
         # Paginate through the collection with multiple requests.
@@ -94,7 +98,11 @@ function New-OarJob {
         # The command to execute when the job starts.
         [Parameter(Mandatory, Position = 0)][ValidateNotNullOrEmpty()][string]$Command,
         # Site's ID.
-        [Parameter()][ValidatePattern("\w*")][string]$Site,
+        [Parameter()]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        [string]
+        $Site,
         # A description of the resources you want to book for your job, in OAR format.
         [Parameter()][string]$Resources,
         # The directory in which the command will be launched.
@@ -173,7 +181,11 @@ function Wait-OarJob {
         # ID of job(s) to wait for.
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][int[]]$JobId,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        [string[]]
+        $Site,
         # Status check interval.
         [Parameter()][int]$Interval = 60,
         # Desired state of specified jobs.
@@ -292,7 +304,11 @@ function Remove-OarJob {
         # ID of job(s) to delete.
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Id", ValueFromPipelineByPropertyName)][int[]]$JobId,
         # Site's ID.
-        [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        [string[]]
+        $Site,
         # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential,
         # Return an object representing the item with which you are working.
@@ -342,7 +358,11 @@ function Get-OarJobWalltime {
         # ID of job to fetch.
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][int]$JobId,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        [string[]]
+        $Site
     )
     if (!$Site) {
         $Site = Get-G5KCurrentSite
@@ -361,7 +381,11 @@ function Set-OarJobWalltime {
         # ID of job to fetch.
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][int]$JobId,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")][string[]]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        [string[]]
+        $Site,
         # The new wanted walltime, format is <[+]new walltime>. If no signed is used, the value is absolute.
         [Parameter(Mandatory)][string]$Walltime,
         # Request walltime increase to be trialed or applied immediately regardless of any otherwise configured delay. Must be authorized in OAR configuration.

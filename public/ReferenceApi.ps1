@@ -8,7 +8,10 @@ function Get-OarSite {
     [CmdletBinding(DefaultParameterSetName = "DefaultDate")]
     param(
         # Site's ID.
-        [Parameter(Position = 0)][ValidatePattern("\w*")]$Site,
+        [Parameter(Position = 0)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # Use a specific branch of reference-repository, for example the 'testing' branch contains the resources that are not yet in production.
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         # Fetch the version of reference-repository for the specified date.
@@ -68,7 +71,10 @@ function Get-OarCluster {
         # Cluster's ID.
         [Parameter(Position = 0)][ValidatePattern("\w*")]$Cluster,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # Use a specific branch of reference-repository, for example the 'testing' branch contains the resources that are not yet in production.
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         # Fetch the version of reference-repository for the specified date.
@@ -111,7 +117,10 @@ function Get-OarNode {
         # Cluster's ID.
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Cluster,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # Use a specific branch of reference-repository, for example the 'testing' branch contains the resources that are not yet in production.
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         # Fetch the version of reference-repository for the specified date.
@@ -152,7 +161,10 @@ function Get-OarPdu {
         # Pdu's ID.
         [Parameter(Position = 0)][ValidatePattern("\w*")]$Pdu,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # Use a specific branch of reference-repository, for example the 'testing' branch contains the resources that are not yet in production.
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         # Fetch the version of reference-repository for the specified date.
@@ -193,7 +205,10 @@ function Get-OarNetworkEquipment {
         # Network Equipment's ID.
         [Parameter(Position = 0)][ValidatePattern("\w*")]$EquipmentId,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # Use a specific branch of reference-repository, for example the 'testing' branch contains the resources that are not yet in production.
         [Parameter()][ValidatePattern("\w*")]$Branch = "master",
         # Fetch the version of reference-repository for the specified date.

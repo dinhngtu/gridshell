@@ -28,9 +28,6 @@ function Get-G5KGroup {
         # Specify a user account that has permission to perform this action. The default is the current user.
         [Parameter()][pscredential]$Credential
     )
-    if (!$Site) {
-        $Site = Get-G5KCurrentSite
-    }
     $resp = Invoke-RestMethod -Uri ("{0}/3.0/users/groups/{1}" -f $script:g5kApiRoot, $GroupName) -Credential $Credential
     if ($GroupName) {
         return $resp | ConvertTo-G5KGroup

@@ -8,7 +8,10 @@ function Get-OarSiteStatus {
     [CmdletBinding()]
     param(
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # Disable status of disks in response.
         [Parameter()][switch]$NoDisks,
         # Disable status of nodes in response.
@@ -45,7 +48,10 @@ function Get-OarClusterStatus {
         # Cluster's ID.
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Cluster,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # Disable status of disks in response.
         [Parameter()][switch]$NoDisks,
         # Disable status of nodes in response.
@@ -76,7 +82,10 @@ function Get-OarNodeAvailability {
         # Cluster's ID.
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Cluster,
         # Site's ID.
-        [Parameter(ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Site,
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # Disable status of disks in response.
         [Parameter()][switch]$NoDisks,
         # Disable status of nodes in response.

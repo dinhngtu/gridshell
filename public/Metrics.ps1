@@ -5,7 +5,10 @@ function Get-KwollectMetrics {
     [CmdletBinding()]
     param(
         # Site's ID.
-        [Parameter()][ValidatePattern("\w*")]$Site,
+        [Parameter()]
+        [ValidatePattern("\w*")]
+        [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
+        $Site,
         # List of nodes on which to obtain values.
         [Parameter(ParameterSetName = "WithJobId")]
         [Parameter(Mandatory, ParameterSetName = "WithoutJobId")]
