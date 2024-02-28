@@ -119,7 +119,7 @@ function Select-OarNode {
         [Parameter()][switch]$HasVirtual,
 
         # Resource has 'atypical' hardware (such as non-x86_64 CPU architecture for example).
-        [Parameter()][switch]$Exotic,
+        [Parameter()][Alias("IsExotic")][switch]$Exotic,
         # Node state.
         [Parameter()][ArgumentCompletions("Absent", "Alive", "Dead")][string]$State,
         # Node is alive.
