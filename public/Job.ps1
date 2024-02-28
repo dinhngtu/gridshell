@@ -121,7 +121,7 @@ function New-OarJob {
         [string]
         $Properties,
         # An OAR resource selector.
-        [Parameter(Mandatory, ParameterSetName = "Expression", ValueFromPipelineByPropertyName)][object]$Expression,
+        [Parameter(Mandatory, ParameterSetName = "Selector", ValueFromPipelineByPropertyName)][object]$Selector,
         # Request that the job starts at a specified time.
         [Parameter()][System.Nullable[datetime]]$Reservation,
         # Request that the job ends at a specified time.
@@ -165,8 +165,8 @@ function New-OarJob {
     elseif (!$Reservation -and $Duration) {
         $resv_string = "now,{0}" -f (Format-G5KDate ([datetime]::Now + $Duration))
     }
-    if ($Expression) {
-        $Properties = $Expression.ToString()
+    if ($Selector) {
+        $Properties = $Selector.ToString()
     }
     $params = Remove-EmptyValues @{
         command     = $Command;

@@ -39,7 +39,7 @@ function Select-OarNode {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName = "UnionAll")]
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName = "UnionAny")]
         [object]
-        $Expression,
+        $Selector,
         # Resource must match both this selector and the combined selector.
         [Parameter(ParameterSetName = "IntersectAll")]
         [Parameter(ParameterSetName = "IntersectAny")]
@@ -97,7 +97,7 @@ function Select-OarNode {
         [Parameter()][switch]$HasInfiniband,
         # The minimum number of Infiniband interfaces available.
         [Parameter()][System.Nullable[int]]$MinInfinibandCount,
-        # The minimum rate of the connected Infiniband interface in Gbps
+        # The minimum rate of the connected Infiniband interface in Gbps.
         [Parameter()][System.Nullable[int]]$MinInfinibandRate,
         # The minimum amount of memory in MB per CPU core.
         [Parameter()][System.Nullable[int]]$MinMemPerCore,
@@ -115,7 +115,7 @@ function Select-OarNode {
         [Parameter()][System.Nullable[int]]$MinThreadCount,
         # Node virtualization capacity.
         [Parameter()][ArgumentCompletions("NO", "amd-v", "arm64", "ivt")][string]$Virtual,
-        # Node has virtualization capacity
+        # Node has virtualization capacity.
         [Parameter()][switch]$HasVirtual,
 
         # Resource has 'atypical' hardware (such as non-x86_64 CPU architecture for example).
@@ -134,147 +134,146 @@ function Select-OarNode {
     )
 
     if ($Any) {
-        $expr = [G5KSelectorOr]::new()
+        $sel = [G5KSelectorOr]::new()
     }
     else {
-        $expr = [G5KSelectorAnd]::new()
+        $sel = [G5KSelectorAnd]::new()
     }
 
     if ($null -ne $MinCoreCount) {
-        $expr.Add("(core_count>$MinCoreCount)")
+        $sel.Add("(core_count>$MinCoreCount)")
     }
     if ($null -ne $MinCpuCount) {
-        $expr.Add("(cpu_count>$MinCpuCount)")
+        $sel.Add("(cpu_count>$MinCpuCount)")
     }
     if (![string]::IsNullOrEmpty($CpuArch)) {
-        $expr.Add("(lower(cpuarch) like lower('$CpuArch'))")
+        $sel.Add("(lower(cpuarch) like lower('$CpuArch'))")
     }
     if ($null -ne $MinCorePerCpu) {
-        $expr.Add("(cpucore>$MinCorePerCpu)")
+        $sel.Add("(cpucore>$MinCorePerCpu)")
     }
     if ($null -ne $MinCpuFreq) {
-        $expr.Add("(cpufreq>$MinCpuFreq)")
+        $sel.Add("(cpufreq>$MinCpuFreq)")
     }
     if (![string]::IsNullOrEmpty($CpuType)) {
-        $expr.Add("(lower(cputype) like lower('$CpuType'))")
+        $sel.Add("(lower(cputype) like lower('$CpuType'))")
     }
     if ($null -ne $MinDiskReservationCount) {
-        $expr.Add("(disk_reservation_count>$MinDiskReservationCount)")
+        $sel.Add("(disk_reservation_count>$MinDiskReservationCount)")
     }
     if (![string]::IsNullOrEmpty($DiskType)) {
-        $expr.Add("(lower(disktype) like lower('$DiskType'))")
+        $sel.Add("(lower(disktype) like lower('$DiskType'))")
     }
     elseif ($HasSsd) {
-        $expr.Add("(lower(disktype) like '%/ssd')")
+        $sel.Add("(lower(disktype) like '%/ssd')")
     }
     if ($null -ne $MinEthCount) {
-        $expr.Add("(eth_count>$MinEthCount)")
+        $sel.Add("(eth_count>$MinEthCount)")
     }
     if ($null -ne $MinEthKavlanCount) {
-        $expr.Add("(eth_kavlan_count>$MinEthKavlanCount)")
+        $sel.Add("(eth_kavlan_count>$MinEthKavlanCount)")
     }
     if ($null -ne $MinEthRate) {
-        $expr.Add("(eth_rate>$MinEthRate)")
+        $sel.Add("(eth_rate>$MinEthRate)")
     }
     if ($null -ne $MinGpuCount) {
-        $expr.Add("(gpu_count>$MinGpuCount)")
+        $sel.Add("(gpu_count>$MinGpuCount)")
     }
     if (![string]::IsNullOrEmpty($GpuModel)) {
-        $expr.Add("(lower(gpu_model) like lower('$GpuModel'))")
+        $sel.Add("(lower(gpu_model) like lower('$GpuModel'))")
     }
     if (![string]::IsNullOrEmpty($Infiniband)) {
-        $expr.Add("(lower(ib) like lower('$Infiniband'))")
+        $sel.Add("(lower(ib) like lower('$Infiniband'))")
     }
     elseif ($HasInfiniband) {
-        $expr.Add("(ib<>'NO')")
+        $sel.Add("(ib<>'NO')")
     }
     if ($null -ne $MinInfinibandCount) {
-        $expr.Add("(ib_count>$MinInfinibandCount)")
+        $sel.Add("(ib_count>$MinInfinibandCount)")
     }
     if ($null -ne $MinInfinibandRate) {
-        $expr.Add("(ib_rate>$MinInfinibandRate)")
+        $sel.Add("(ib_rate>$MinInfinibandRate)")
     }
     if ($null -ne $MinMemPerCore) {
-        $expr.Add("(memcore>$MinMemPerCore)")
+        $sel.Add("(memcore>$MinMemPerCore)")
     }
     if ($null -ne $MinMemPerCpu) {
-        $expr.Add("(memcpu>$MinMemPerCpu)")
+        $sel.Add("(memcpu>$MinMemPerCpu)")
     }
     if ($null -ne $MinMemPerNode) {
-        $expr.Add("(memnode>$MinMemPerNode)")
+        $sel.Add("(memnode>$MinMemPerNode)")
     }
     if (![string]::IsNullOrEmpty($Mic)) {
-        $expr.Add("(lower(mic) like lower('$Mic'))")
+        $sel.Add("(lower(mic) like lower('$Mic'))")
     }
     if ($null -ne $MinOpaCount) {
-        $expr.Add("(opa_count>$MinOpaCount)")
+        $sel.Add("(opa_count>$MinOpaCount)")
     }
     if ($null -ne $MinOpaRate) {
-        $expr.Add("(opa_rate>$MinOpaRate)")
+        $sel.Add("(opa_rate>$MinOpaRate)")
     }
     if ($null -ne $MinThreadCount) {
-        $expr.Add("(thread_count>$MinThreadCount)")
+        $sel.Add("(thread_count>$MinThreadCount)")
     }
     if (![string]::IsNullOrEmpty($Virtual)) {
-        $expr.Add("(lower(virtual) like lower('$Virtual'))")
+        $sel.Add("(lower(virtual) like lower('$Virtual'))")
     }
     elseif ($HasVirtual) {
-        $expr.Add("(virtual<>'NO')")
+        $sel.Add("(virtual<>'NO')")
     }
 
     if ($Exotic) {
-        $expr.Add("(exotic<>'NO')")
+        $sel.Add("(exotic<>'NO')")
     }
     if (![string]::IsNullOrEmpty($State)) {
-        $expr.Add("(lower(state) like lower('$State'))")
+        $sel.Add("(lower(state) like lower('$State'))")
     }
     elseif ($IsAlive) {
-        $expr.Add("(state='Alive')")
+        $sel.Add("(state='Alive')")
     }
     if (![string]::IsNullOrEmpty($HostName)) {
-        $expr.Add("(lower(host) like lower('$HostName'))")
+        $sel.Add("(lower(host) like lower('$HostName'))")
     }
 
-    foreach ($e in $CustomExpressions) {
-        $expr.Add("($e)")
+    foreach ($e in $Filters) {
+        $sel.Add("($e)")
     }
-    if ($null -ne $Expression) {
+    if ($null -ne $Selector) {
         if ($Union -and $Any) {
-            foreach ($e in $Expression) {
-                $expr.Add($e)
+            foreach ($e in $Selector) {
+                $sel.Add($e)
             }
         }
         elseif ($Union) {
             # implied -All
             $parent = [G5KSelectorOr]::new()
-            $parent.Add($Expression)
-            $parent.Add($expr)
-            $expr = $parent
+            $parent.Add($Selector)
+            $parent.Add($sel)
+            $sel = $parent
         }
         elseif ($Any) {
             # implied -Intersect
             $parent = [G5KSelectorAnd]::new()
-            $parent.Add($Expression)
-            $parent.Add($expr)
-            $expr = $parent
+            $parent.Add($Selector)
+            $parent.Add($sel)
+            $sel = $parent
         }
         else {
             # default (-Intersect -All)
-            foreach ($e in $Expression) {
-                $expr.Add($e)
+            foreach ($e in $Selector) {
+                $sel.Add($e)
             }
         }
     }
 
-    $ret = [PSCustomObject]@{
-        Expression       = $expr;
-        ExpressionString = $expr.ToString()
-    }
     if ($List) {
-        oarnodes -Y --sql $ret.ExpressionString
+        oarnodes -Y --sql $sel.ToString()
     }
     else {
-        $ret
+        [PSCustomObject]@{
+            Selector       = $sel;
+            SelectorString = $sel.ToString()
+        }
     }
 }
 Export-ModuleMember -Function Select-OarNode
