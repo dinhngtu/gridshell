@@ -115,11 +115,13 @@ function New-OarJob {
         # The path to the file that will contain the STDERR output of your command.
         [Parameter()][string]$ErrorOutput,
         # A string containing SQL constraints on the resources (see OAR documentation for more details).
-        [Parameter()]
+        [Parameter(ParameterSetName = "Properties")]
         [Alias("p")]
         [ArgumentCompleter({ Get-GridshellClusterCompletion @args })]
         [string]
         $Properties,
+        # An OAR resource selector.
+        [Parameter(Mandatory, ParameterSetName = "Expression", ValueFromPipelineByPropertyName)][object]$Expression,
         # Request that the job starts at a specified time.
         [Parameter()][System.Nullable[datetime]]$Reservation,
         # Request that the job ends at a specified time.
@@ -162,6 +164,9 @@ function New-OarJob {
     }
     elseif (!$Reservation -and $Duration) {
         $resv_string = "now,{0}" -f (Format-G5KDate ([datetime]::Now + $Duration))
+    }
+    if ($Expression) {
+        $Properties = $Expression.ToString()
     }
     $params = Remove-EmptyValues @{
         command     = $Command;

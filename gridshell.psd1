@@ -100,6 +100,7 @@
         "Get-OarVersion",
         "New-OarJob",
         "Remove-OarJob",
+        "Select-OarNode",
         "Set-G5KApiRoot",
         "Set-GridshellCurrentCredential",
         "Set-GridshellCurrentSite",
