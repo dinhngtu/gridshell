@@ -26,7 +26,7 @@ function Get-KwollectMetrics {
         # Specifies the path to the metric output file.
         [Parameter()][string]$Output,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite

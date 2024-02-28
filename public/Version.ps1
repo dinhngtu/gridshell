@@ -16,7 +16,7 @@ function Get-OarVersion {
         # Paginate through the collection with multiple requests.
         [Parameter(ParameterSetName = "List")][ValidateRange(1, 500)][int]$Offset = 0,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     $params = $null
     if ($PSCmdlet.ParameterSetName -eq "List") {
@@ -57,7 +57,7 @@ function Get-OarSiteVersion {
         # Paginate through the collection with multiple requests.
         [Parameter(ParameterSetName = "List")][ValidateRange(1, 500)][int]$Offset = 0,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite

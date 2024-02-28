@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 $script:currentSite = $null
+$script:currentCredential = [pscredential]$null
 
 function Get-GridshellCurrentSite {
     [CmdletBinding()]
@@ -33,3 +34,18 @@ function Set-GridshellCurrentSite {
     $script:currentSite = $Site
 }
 Export-ModuleMember -Function Set-GridshellCurrentSite
+
+function Set-GridshellCurrentCredential {
+    [CmdletBinding(DefaultParameterSetName = "Value")]
+    param(
+        [Parameter(Mandatory, Position = 0, ParameterSetName = "Value")]
+        [pscredential]
+        $Credential,
+        [Parameter(Mandatory, ParameterSetName = "Default")][switch]$Default
+    )
+    if ($Default) {
+        $Credential = $null
+    }
+    $script:currentCredential = $Credential
+}
+Export-ModuleMember -Function Set-GridshellCurrentCredential

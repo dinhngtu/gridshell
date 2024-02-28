@@ -101,6 +101,7 @@
         "New-OarJob",
         "Remove-OarJob",
         "Set-G5KApiRoot",
+        "Set-GridshellCurrentCredential",
         "Set-GridshellCurrentSite",
         "Set-OarJobWalltime",
         "Start-KaDeployment",

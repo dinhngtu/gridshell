@@ -25,7 +25,7 @@ function Get-OarSiteStatus {
         # Don't get jobs on resources. 'reservations' Array will not be present.
         [Parameter()][switch]$NoJobDetails,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite
@@ -64,7 +64,7 @@ function Get-OarClusterStatus {
         # Don't get jobs on resources. 'reservations' Array will not be present.
         [Parameter()][switch]$NoJobDetails,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite
@@ -101,7 +101,7 @@ function Get-OarNodeAvailability {
         # Don't get jobs on resources. 'reservations' Array will not be present.
         [Parameter()][switch]$NoJobDetails,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite

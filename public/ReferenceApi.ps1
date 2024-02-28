@@ -27,7 +27,7 @@ function Get-OarSite {
         [Parameter(Mandatory, ParameterSetName = "CurrentVersion")]
         [string]$Version,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential,
+        [Parameter()][pscredential]$Credential = $script:currentCredential,
         # Get the current Grid'5000 site you're on.
         [Parameter(Mandatory, ParameterSetName = "CurrentDate")]
         [Parameter(Mandatory, ParameterSetName = "CurrentUnixTimestamp")]
@@ -87,7 +87,7 @@ function Get-OarCluster {
         # Specificy the reference-repository's commit hash to get. This allow to get a specific version of the requested resource, to go back in time.
         [Parameter(ParameterSetName = "Version")][string]$Version,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite
@@ -136,7 +136,7 @@ function Get-OarNode {
         # Specificy the reference-repository's commit hash to get. This allow to get a specific version of the requested resource, to go back in time.
         [Parameter(ParameterSetName = "Version")][string]$Version,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite
@@ -180,7 +180,7 @@ function Get-OarPdu {
         # Specificy the reference-repository's commit hash to get. This allow to get a specific version of the requested resource, to go back in time.
         [Parameter(ParameterSetName = "Version")][string]$Version,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite
@@ -224,7 +224,7 @@ function Get-OarNetworkEquipment {
         # Specificy the reference-repository's commit hash to get. This allow to get a specific version of the requested resource, to go back in time.
         [Parameter(ParameterSetName = "Version")][string]$Version,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite

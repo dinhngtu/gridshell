@@ -25,7 +25,7 @@ function Get-KaEnvironment {
         # Specifies the path to the environment output file.
         [Parameter()][string]$Output,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite
@@ -79,7 +79,7 @@ function Get-KaDeployment {
         # Filter the deployment collection with a specific deployment owner. Use '*' to specify all users.
         [Parameter()][ValidatePattern("\w*")][string]$User = "~",
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     begin {
         if (!$PSBoundParameters.Site -and !$Site.Count) {
@@ -176,7 +176,7 @@ function Start-KaDeployment {
         # Overwrite the default timeout for kexec reboots.
         [Parameter()][System.Nullable[int]]$RebootKexecTimeout,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite
@@ -229,7 +229,7 @@ function Wait-KaDeployment {
         # Desired state of specified deployments.
         [Parameter()][ValidateSet("waiting", "processing", "canceled", "terminated", "error")][string[]]$Until = @("canceled", "terminated", "error"),
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     begin {
         $towait = [System.Collections.Generic.List[object]]::new()
@@ -306,7 +306,7 @@ function Stop-KaDeployment {
         [string[]]
         $Site,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential,
+        [Parameter()][pscredential]$Credential = $script:currentCredential,
         # Return an object representing the item with which you are working.
         [Parameter()][switch]$PassThru
     )

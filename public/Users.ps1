@@ -10,7 +10,7 @@ function Get-G5KUser {
         # User's name.
         [Parameter(Position = 0)][Alias("User")][ValidatePattern("\w*")]$UserName = "~",
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     return Invoke-RestMethod -Uri ("{0}/3.0/users/users/{1}" -f $script:g5kApiRoot, $UserName) -Credential $Credential | ConvertTo-G5KUser
 }
@@ -26,7 +26,7 @@ function Get-G5KGroup {
         # Group's name.
         [Parameter(Position = 0)][string]$GroupName,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     $resp = Invoke-RestMethod -Uri ("{0}/3.0/users/groups/{1}" -f $script:g5kApiRoot, $GroupName) -Credential $Credential
     if ($GroupName) {
@@ -48,7 +48,7 @@ function Get-G5KUserGroups {
         # User's name.
         [Parameter(Position = 0)][Alias("User")][ValidatePattern("\w*")]$UserName = "~",
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     return (Invoke-RestMethod -Uri ("{0}/3.0/users/users/{1}/groups" -f $script:g5kApiRoot, $UserName) -Credential $Credential).items | ConvertTo-G5KGroupMembership
 }
@@ -64,7 +64,7 @@ function Get-G5KGroupMembers {
         # Group's name.
         [Parameter(Mandatory, Position = 0)][ValidatePattern("\w*")]$GroupName,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     return (Invoke-RestMethod -Uri ("{0}/3.0/users/groups/{1}/members" -f $script:g5kApiRoot, $GroupName) -Credential $Credential).items
 }

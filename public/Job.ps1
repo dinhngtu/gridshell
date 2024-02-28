@@ -32,7 +32,7 @@ function Get-OarJob {
         # Filter jobs by queue. Use '*' to specify all queues.
         [Parameter(ParameterSetName = "Query")][ValidateSet("default", "production", "admin", "besteffort", "testing")][string]$Queue,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     begin {
         if (!$PSBoundParameters.Site -and !$Site.Count) {
@@ -128,7 +128,7 @@ function New-OarJob {
         # A job queue.
         [Parameter()][ValidateSet("default", "production", "admin", "besteffort", "testing")][string]$Queue = "default",
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite
@@ -193,7 +193,7 @@ function Wait-OarJob {
         # Do not estimate job runtime.
         [Parameter()][switch]$NoEstimate,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     begin {
         $towait = [System.Collections.Generic.List[object]]::new()
@@ -310,7 +310,7 @@ function Remove-OarJob {
         [string[]]
         $Site,
         # Specify a user account that has permission to perform this action. The default is the current user.
-        [Parameter()][pscredential]$Credential,
+        [Parameter()][pscredential]$Credential = $script:currentCredential,
         # Return an object representing the item with which you are working.
         [Parameter()][switch]$PassThru
     )
@@ -362,7 +362,8 @@ function Get-OarJobWalltime {
         [ValidatePattern("\w*")]
         [ArgumentCompletions("grenoble", "lille", "luxembourg", "lyon", "nancy", "nantes", "rennes", "sophia", "toulouse")]
         [string[]]
-        $Site
+        $Site,
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite
@@ -395,7 +396,8 @@ function Set-OarJobWalltime {
         # Request walltime increase to be trialed or applied wholly at once, or not applied otherwise.
         [Parameter()][switch]$Whole,
         # Specify a timeout (in seconds) after which the walltime change request will be aborted if not already accepted by the scheduler. A default timeout could be set in OAR configuration.
-        [Parameter()][System.Nullable[int]]$Timeout
+        [Parameter()][System.Nullable[int]]$Timeout,
+        [Parameter()][pscredential]$Credential = $script:currentCredential
     )
     if (!$Site) {
         $Site = Get-GridshellCurrentSite
