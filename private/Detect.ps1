@@ -52,3 +52,5 @@ function Set-GridshellCurrentCredential {
     $script:currentCredential = $Credential
 }
 Export-ModuleMember -Function Set-GridshellCurrentCredential
+New-Alias -Name Connect-G5KUser -Value Set-GridshellCurrentCredential
+Export-ModuleMember -Alias Connect-G5KUser
