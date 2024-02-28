@@ -87,7 +87,6 @@
         "Get-KaDeployment",
         "Get-KaEnvironment",
         "Get-KwollectMetrics",
-        "Get-KwollectMetrics",
         "Get-OarCluster",
         "Get-OarClusterStatus",
         "Get-OarJob",
