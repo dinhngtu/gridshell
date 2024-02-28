@@ -46,7 +46,10 @@ function Get-OarClusterStatus {
     [CmdletBinding()]
     param(
         # Cluster's ID.
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Cluster,
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompleter({ Get-G5KClusterCompletion @args })]
+        $Cluster,
         # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)]
         [ValidatePattern("\w*")]
@@ -80,7 +83,10 @@ function Get-OarNodeAvailability {
     [CmdletBinding()]
     param(
         # Cluster's ID.
-        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Cluster,
+        [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompleter({ Get-G5KClusterCompletion @args })]
+        $Cluster,
         # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)]
         [ValidatePattern("\w*")]

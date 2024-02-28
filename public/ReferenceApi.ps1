@@ -69,7 +69,10 @@ function Get-OarCluster {
     [CmdletBinding(DefaultParameterSetName = "Date")]
     param(
         # Cluster's ID.
-        [Parameter(Position = 0)][ValidatePattern("\w*")]$Cluster,
+        [Parameter(Position = 0)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompleter({ Get-G5KClusterCompletion @args })]
+        $Cluster,
         # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)]
         [ValidatePattern("\w*")]
@@ -115,7 +118,10 @@ function Get-OarNode {
         # Server's ID.
         [Parameter(Position = 0)][ValidatePattern("\w*")]$Node,
         # Cluster's ID.
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)][ValidatePattern("\w*")]$Cluster,
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidatePattern("\w*")]
+        [ArgumentCompleter({ Get-G5KClusterCompletion @args })]
+        $Cluster,
         # Site's ID.
         [Parameter(ValueFromPipelineByPropertyName)]
         [ValidatePattern("\w*")]
