@@ -20,6 +20,8 @@ function Get-GridshellCurrentSite {
     return $script:currentSite
 }
 Export-ModuleMember -Function Get-GridshellCurrentSite
+New-Alias -Name Get-OarCurrentSite -Value Get-GridshellCurrentSite
+Export-ModuleMember -Alias Get-OarCurrentSite
 
 function Set-GridshellCurrentSite {
     [CmdletBinding(DefaultParameterSetName = "Value")]
@@ -37,8 +39,10 @@ function Set-GridshellCurrentSite {
     $script:currentSite = $Site
 }
 Export-ModuleMember -Function Set-GridshellCurrentSite
+New-Alias -Name Set-OarCurrentSite -Value Set-GridshellCurrentSite
+Export-ModuleMember -Alias Set-OarCurrentSite
 
-function Set-GridshellCurrentCredential {
+function Connect-G5KUser {
     [CmdletBinding(DefaultParameterSetName = "Value")]
     param(
         [Parameter(Mandatory, Position = 0, ParameterSetName = "Value")]
@@ -51,6 +55,9 @@ function Set-GridshellCurrentCredential {
     }
     $script:currentCredential = $Credential
 }
-Export-ModuleMember -Function Set-GridshellCurrentCredential
-New-Alias -Name Connect-G5KUser -Value Set-GridshellCurrentCredential
-Export-ModuleMember -Alias Connect-G5KUser
+Export-ModuleMember -Function Connect-G5KUser
+
+function Disconnect-G5KUser {
+    $script:currentCredential = $null
+}
+Export-ModuleMember -Function Disconnect-G5KUser

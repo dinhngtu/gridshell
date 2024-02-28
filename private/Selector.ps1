@@ -29,7 +29,7 @@ class G5KSelectorOr : System.Collections.Generic.List[object] {
 function Select-OarNode {
     <#
     .SYNOPSIS
-        Create or extend an OAR resource selector using a list of specifiers.
+        Create or extend an OAR resource selector using the given specifiers.
     #>
     [CmdletBinding()]
     param(
@@ -127,8 +127,8 @@ function Select-OarNode {
         # The full hostname of the node the resource is part of.
         [Parameter()][string]$HostName,
 
-        # Custom specifiers to include.
-        [Parameter()][string[]]$CustomExpressions,
+        # Additional specifiers to include.
+        [Parameter()][string[]]$Filters,
         # List resources belonging to this selector with `oarnodes`.
         [Parameter()][switch]$List
     )
@@ -231,9 +231,7 @@ function Select-OarNode {
     elseif ($IsAlive) {
         $expr.Add("(state='Alive')")
     }
-    # The full hostname of the node the resource is part of.
     if (![string]::IsNullOrEmpty($HostName)) {
-        # The full hostname of the node the resource is part of.
         $expr.Add("(lower(host) like lower('$HostName'))")
     }
 

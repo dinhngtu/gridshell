@@ -75,6 +75,8 @@
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport = @(
+        "Connect-G5KUser",
+        "Disconnect-G5KUser",
         "Get-G5KApiRoot",
         "Get-G5KGroup",
         "Get-G5KGroupMembers",
@@ -102,7 +104,6 @@
         "Remove-OarJob",
         "Select-OarNode",
         "Set-G5KApiRoot",
-        "Set-GridshellCurrentCredential",
         "Set-GridshellCurrentSite",
         "Set-OarJobWalltime",
         "Start-KaDeployment",
@@ -119,9 +120,10 @@
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
     AliasesToExport   = @(
-        "Connect-G5KUser",
+        "Get-OarCurrentSite",
         "New-KaDeployment",
         "Remove-KaDeployment",
+        "Set-OarCurrentSite",
         "Start-OarJob",
         "Stop-OarJob"
     )
