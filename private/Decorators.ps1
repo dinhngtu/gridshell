@@ -47,6 +47,7 @@ function ConvertTo-KaDeployment {
     process {
         $_ | Add-ObjectDetail -TypeName "G5K.Kameleon.Deployment" -PropertyToAdd @{
             DeploymentId = $_.uid;
+            User         = $_.user_uid;
             CreatedAt    = [System.DateTimeOffset]::FromUnixTimeSeconds($_.created_at).LocalDateTime;
             UpdatedAt    = [System.DateTimeOffset]::FromUnixTimeSeconds($_.updated_at).LocalDateTime;
             Site         = $_.links | Where-Object rel -ieq "parent" | Select-Object -First 1 -ExpandProperty href | Split-Path -Leaf;
@@ -86,7 +87,7 @@ function ConvertTo-OarNodeAvailabilityObject {
     process {
         Split-PropertyKey -InputObject $_ -KeyName Node | ForEach-Object {
             $_ | Add-ObjectDetail -TypeName "G5K.Oar.NodeAvailability" -PropertyToAdd @{
-                Active = ($_.reservations | Where-Object state -ine "waiting" | Measure-Object).Count;
+                Active  = ($_.reservations | Where-Object state -ine "waiting" | Measure-Object).Count;
                 Waiting = ($_.reservations | Where-Object state -ieq "waiting" | Measure-Object).Count;
             }
         }

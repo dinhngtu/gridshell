@@ -17,6 +17,9 @@
                                 <PropertyName>Site</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
+                                <PropertyName>User</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
                                 <PropertyName>environment</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
