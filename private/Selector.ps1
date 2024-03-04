@@ -1,28 +1,38 @@
 class G5KSelectorAnd : System.Collections.Generic.List[object] {
     [string] ToString() {
-        $tokens = [System.Collections.Generic.List[string]]::new()
-        foreach ($el in $this) {
-            $tokens.Add($el.ToString());
-            $tokens.Add("and");
+        if ($this.Count -eq 1) {
+            return $this[0]
         }
-        if ($tokens.Count -gt 0) {
-            $tokens.RemoveAt($tokens.Count - 1)
+        else {
+            $tokens = [System.Collections.Generic.List[string]]::new()
+            foreach ($el in $this) {
+                $tokens.Add($el.ToString());
+                $tokens.Add("and");
+            }
+            if ($tokens.Count -gt 0) {
+                $tokens.RemoveAt($tokens.Count - 1)
+            }
+            return "(" + (-join $tokens) + ")"
         }
-        return "(" + (-join $tokens) + ")"
     }
 }
 
 class G5KSelectorOr : System.Collections.Generic.List[object] {
     [string] ToString() {
-        $tokens = [System.Collections.Generic.List[string]]::new()
-        foreach ($el in $this) {
-            $tokens.Add($el.ToString());
-            $tokens.Add("or");
+        if ($this.Count -eq 1) {
+            return $this[0]
         }
-        if ($tokens.Count -gt 0) {
-            $tokens.RemoveAt($tokens.Count - 1)
+        else {
+            $tokens = [System.Collections.Generic.List[string]]::new()
+            foreach ($el in $this) {
+                $tokens.Add($el.ToString());
+                $tokens.Add("or");
+            }
+            if ($tokens.Count -gt 0) {
+                $tokens.RemoveAt($tokens.Count - 1)
+            }
+            return "(" + (-join $tokens) + ")"
         }
-        return "(" + (-join $tokens) + ")"
     }
 }
 
