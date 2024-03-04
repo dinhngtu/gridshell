@@ -302,7 +302,7 @@ function Select-OarNode {
     }
 
     if ($List) {
-        Write-Information "Filter: ${$sel.ToString()}"
+        Write-Information "Filter: $($sel.ToString())" -InformationAction Continue
         oarnodes -J --sql $sel.ToString() | jq '[.[].host]|unique'
     }
     else {
