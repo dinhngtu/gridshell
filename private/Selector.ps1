@@ -141,25 +141,25 @@ function Select-OarNode {
     }
 
     if ($null -ne $MinCoreCount) {
-        $sel.Add("(core_count>$MinCoreCount)")
+        $sel.Add("(core_count>=$MinCoreCount)")
     }
     if ($null -ne $MinCpuCount) {
-        $sel.Add("(cpu_count>$MinCpuCount)")
+        $sel.Add("(cpu_count>=$MinCpuCount)")
     }
     if (![string]::IsNullOrEmpty($CpuArch)) {
         $sel.Add("(lower(cpuarch) like lower('$CpuArch'))")
     }
     if ($null -ne $MinCorePerCpu) {
-        $sel.Add("(cpucore>$MinCorePerCpu)")
+        $sel.Add("(cpucore>=$MinCorePerCpu)")
     }
     if ($null -ne $MinCpuFreq) {
-        $sel.Add("(cpufreq>$MinCpuFreq)")
+        $sel.Add("(cpufreq>=$MinCpuFreq)")
     }
     if (![string]::IsNullOrEmpty($CpuType)) {
         $sel.Add("(lower(cputype) like lower('$CpuType'))")
     }
     if ($null -ne $MinDiskReservationCount) {
-        $sel.Add("(disk_reservation_count>$MinDiskReservationCount)")
+        $sel.Add("(disk_reservation_count>=$MinDiskReservationCount)")
     }
     if (![string]::IsNullOrEmpty($DiskType)) {
         $sel.Add("(lower(disktype) like lower('$DiskType'))")
@@ -168,16 +168,16 @@ function Select-OarNode {
         $sel.Add("(lower(disktype) like '%/ssd')")
     }
     if ($null -ne $MinEthCount) {
-        $sel.Add("(eth_count>$MinEthCount)")
+        $sel.Add("(eth_count>=$MinEthCount)")
     }
     if ($null -ne $MinEthKavlanCount) {
-        $sel.Add("(eth_kavlan_count>$MinEthKavlanCount)")
+        $sel.Add("(eth_kavlan_count>=$MinEthKavlanCount)")
     }
     if ($null -ne $MinEthRate) {
-        $sel.Add("(eth_rate>$MinEthRate)")
+        $sel.Add("(eth_rate>=$MinEthRate)")
     }
     if ($null -ne $MinGpuCount) {
-        $sel.Add("(gpu_count>$MinGpuCount)")
+        $sel.Add("(gpu_count>=$MinGpuCount)")
     }
     if (![string]::IsNullOrEmpty($GpuModel)) {
         $sel.Add("(lower(gpu_model) like lower('$GpuModel'))")
@@ -189,31 +189,31 @@ function Select-OarNode {
         $sel.Add("(ib<>'NO')")
     }
     if ($null -ne $MinInfinibandCount) {
-        $sel.Add("(ib_count>$MinInfinibandCount)")
+        $sel.Add("(ib_count>=$MinInfinibandCount)")
     }
     if ($null -ne $MinInfinibandRate) {
-        $sel.Add("(ib_rate>$MinInfinibandRate)")
+        $sel.Add("(ib_rate>=$MinInfinibandRate)")
     }
     if ($null -ne $MinMemPerCore) {
-        $sel.Add("(memcore>$MinMemPerCore)")
+        $sel.Add("(memcore>=$MinMemPerCore)")
     }
     if ($null -ne $MinMemPerCpu) {
-        $sel.Add("(memcpu>$MinMemPerCpu)")
+        $sel.Add("(memcpu>=$MinMemPerCpu)")
     }
     if ($null -ne $MinMemPerNode) {
-        $sel.Add("(memnode>$MinMemPerNode)")
+        $sel.Add("(memnode>=$MinMemPerNode)")
     }
     if (![string]::IsNullOrEmpty($Mic)) {
         $sel.Add("(lower(mic) like lower('$Mic'))")
     }
     if ($null -ne $MinOpaCount) {
-        $sel.Add("(opa_count>$MinOpaCount)")
+        $sel.Add("(opa_count>=$MinOpaCount)")
     }
     if ($null -ne $MinOpaRate) {
-        $sel.Add("(opa_rate>$MinOpaRate)")
+        $sel.Add("(opa_rate>=$MinOpaRate)")
     }
     if ($null -ne $MinThreadCount) {
-        $sel.Add("(thread_count>$MinThreadCount)")
+        $sel.Add("(thread_count>=$MinThreadCount)")
     }
     if (![string]::IsNullOrEmpty($Virtual)) {
         $sel.Add("(lower(virtual) like lower('$Virtual'))")
