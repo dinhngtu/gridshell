@@ -128,14 +128,17 @@ function Select-OarNode {
         # Node has virtualization capacity.
         [Parameter()][switch]$HasVirtual,
 
+        # The full hostname of the node the resource is part of.
+        [Parameter()][string]$HostName,
+
         # Resource has 'atypical' hardware (such as non-x86_64 CPU architecture for example).
         [Parameter()][Alias("IsExotic")][switch]$Exotic,
         # Node state.
         [Parameter()][ArgumentCompletions("Absent", "Alive", "Dead")][string]$State,
         # Node is alive.
         [Parameter()][switch]$IsAlive,
-        # The full hostname of the node the resource is part of.
-        [Parameter()][string]$HostName,
+        # The type of wattmeter available.
+        [Parameter()][Alias("HasWattmeter")][switch]$Wattmeter,
 
         # Additional specifiers to include.
         [Parameter()][string[]]$Filters,
@@ -177,6 +180,9 @@ function Select-OarNode {
     elseif ($HasSsd) {
         $sel.Add("(lower(disktype) like '%/ssd')")
     }
+    elseif ($PSBoundParameters.ContainsKey("HasSsd")) {
+        $sel.Add("(lower(disktype) not like '%/ssd')")
+    }
     if ($null -ne $MinEthCount) {
         $sel.Add("(eth_count>=$MinEthCount)")
     }
@@ -197,6 +203,9 @@ function Select-OarNode {
     }
     elseif ($HasInfiniband) {
         $sel.Add("(ib<>'NO')")
+    }
+    elseif ($PSBoundParameters.ContainsKey("HasInfiniband")) {
+        $sel.Add("(ib='NO')")
     }
     if ($null -ne $MinInfinibandCount) {
         $sel.Add("(ib_count>=$MinInfinibandCount)")
@@ -231,18 +240,34 @@ function Select-OarNode {
     elseif ($HasVirtual) {
         $sel.Add("(virtual<>'NO')")
     }
+    elseif ($PSBoundParameters.ContainsKey("HasVirtual")) {
+        $sel.Add("(virtual='NO')")
+    }
+
+    if (![string]::IsNullOrEmpty($HostName)) {
+        $sel.Add("(lower(host) like lower('$HostName'))")
+    }
 
     if ($Exotic) {
         $sel.Add("(exotic<>'NO')")
+    }
+    elseif ($PSBoundParameters.ContainsKey("Exotic")) {
+        $sel.Add("(exotic='NO')")
     }
     if (![string]::IsNullOrEmpty($State)) {
         $sel.Add("(lower(state) like lower('$State'))")
     }
     elseif ($IsAlive) {
-        $sel.Add("(state='Alive')")
+        $sel.Add("(state<>'Dead')")
     }
-    if (![string]::IsNullOrEmpty($HostName)) {
-        $sel.Add("(lower(host) like lower('$HostName'))")
+    elseif ($PSBoundParameters.ContainsKey("IsAlive")) {
+        $sel.Add("(state='Dead')")
+    }
+    if ($Wattmeter) {
+        $sel.Add("(wattmeter<>'NO')")
+    }
+    elseif ($PSBoundParameters.ContainsKey("Wattmeter")) {
+        $sel.Add("(wattmeter='NO')")
     }
 
     foreach ($e in $Filters) {
@@ -277,7 +302,8 @@ function Select-OarNode {
     }
 
     if ($List) {
-        oarnodes -Y --sql $sel.ToString()
+        Write-Information "Filter: ${$sel.ToString()}"
+        oarnodes -J --sql $sel.ToString() | jq '[.[].host]|unique'
     }
     else {
         [PSCustomObject]@{
